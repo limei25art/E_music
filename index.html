@@ -157,7 +157,7 @@
     // 角色設定
     const player = {
         x: WORLD_SIZE / 2, y: WORLD_SIZE / 2,
-        speed: 4, size: 40, emoji: '💖',
+        speed: 8, size: 40, emoji: '💖',
         history: [], // 用於記錄路徑，實現尾隨效果
         caughtDinos: 0
     };
@@ -195,7 +195,7 @@
             y: Math.random() * (WORLD_SIZE - 200) + 100,
             question: mirrorQuestions[i],
             state: 'hidden', // hidden, caught
-            bushEmoji: '🌿'
+            bushEmoji: '🌟'
         });
     }
 
