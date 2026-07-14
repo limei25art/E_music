@@ -519,7 +519,7 @@
         dinos.forEach(dino => {
             if(dino.state === 'caught') {
                 caughtCount++;
-                const historyIndex = caughtCount * 15; 
+                const historyIndex = caughtCount * 5; 
                 const pos = player.history[historyIndex] || player.history[player.history.length-1];
                 if(pos) {
                     ctx.font = `35px Arial`;
