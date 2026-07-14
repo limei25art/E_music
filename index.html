@@ -42,7 +42,7 @@
             font-weight: 600; color: var(--apple-text);
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
             font-size: 16px;
-            transition: all 0.3s;
+            
         }
         .pill.highlight {
             background: rgba(255, 149, 0, 0.9);
@@ -70,24 +70,23 @@
         
         /* 核心修正：加入 max-height 與滾動條，確保 Safari 絕不遮擋答案 */
         .modal {
-            background: white; width: 100%; max-width: 500px;
+           background: white; width: 100%; max-width: 500px;
             border-radius: 30px 30px 0 0; 
-            padding: 30px 24px calc(40px + env(safe-area-inset-bottom)); /* 考慮 iPhone 底部黑條 */
+            padding: 20px 20px calc(20px + env(safe-area-inset-bottom));
             transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.1, 0.8, 0.2, 1);
-            text-align: center;
             box-shadow: 0 -10px 30px rgba(0,0,0,0.1);
-            
-            max-height: 90vh; /* 不佔滿全螢幕，留出頂部空間 */
-            overflow-y: auto; /* 內容過長時自動啟用內部滾動條 */
-            -webkit-overflow-scrolling: touch; /* 讓 Safari 滾動更流暢 */
+            max-height: 88vh;           /* 加大可用高度 */
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
             display: flex;
             flex-direction: column;
         }
         .modal-container.active .modal { transform: translateY(0); }
+
+        /* 內容區 */
         .emoji-art { font-size: 48px; margin-bottom: 8px; }
-        .modal h2 { margin: 0 0 10px; font-size: 22px; color: var(--apple-text); flex-shrink: 0; }
-        .modal p { color: #8E8E93; font-size: 16px; margin-bottom: 20px; line-height: 1.4; flex-shrink: 0; }
-        
+        .modal h2 { margin: 0 0 8px; font-size: 21px; }
+        .modal p { color: #8E8E93; font-size: 15px; margin-bottom: 18px; line-height: 1.4; }
         /* 修正：MC 選項外層容器 */
         #qOptions {
             display: flex;
@@ -98,15 +97,20 @@
         }
 
         .btn {
-            background: var(--apple-blue); color: white; border: none;
-            width: 100%; padding: 16px; border-radius: 14px;
-            font-size: 17px; font-weight: 600; margin-bottom: 12px;
-            cursor: pointer; transition: background 0.2s;
-            flex-shrink: 0; /* 核心修正：防止 Safari 自動壓縮按鈕高度 */
+            width: 100%; 
+            padding: 14px 16px;
+            border-radius: 14px;
+            font-size: 16.5px; 
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
         }
-        .btn:active { background: #005bb5; }
-        .btn-outline { background: #F2F2F7; color: var(--apple-blue); }
-        .btn-outline:active { background: #E5E5EA; }
+        .btn-outline {
+            background: #F2F2F7; 
+            color: var(--apple-blue);
+        }
+        .btn:active { opacity: 0.85; transform: scale(0.98); }
 
         /* 置中 Modal */
         .center-modal { align-items: center; justify-content: center; }
