@@ -31,7 +31,6 @@
             position: relative;
         }
         
-        /* 細微葉紋背景 */
         body::before {
             content: '';
             position: absolute;
@@ -50,7 +49,6 @@
             filter: contrast(1.05) saturate(1.1);
         }
         
-        /* UI 疊層 */
         #ui-layer {
             position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
             pointer-events: none;
@@ -58,7 +56,6 @@
             z-index: 10;
         }
         
-        /* 頂部狀態欄 - 葉片風格 */
         .hud {
             display: flex; justify-content: space-between; padding: 40px 20px 20px;
             pointer-events: auto;
@@ -68,7 +65,6 @@
         .pill {
             background: rgba(245, 237, 225, 0.92);
             backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
             padding: 10px 22px; 
             border-radius: 50px;
             font-weight: 600; 
@@ -91,7 +87,6 @@
             50% { transform: scale(1.04) rotate(1deg); }
         }
 
-        /* 模態框 - 有機紙卡風格 */
         .modal-container {
             position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(74, 112, 67, 0.45);
@@ -189,14 +184,6 @@
             margin-bottom: 18px; 
             filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
         }
-        
-        /* 額外自然裝飾 */
-        .leaf-accent {
-            position: absolute;
-            font-size: 28px;
-            opacity: 0.15;
-            pointer-events: none;
-        }
     </style>
 </head>
 <body>
@@ -210,27 +197,24 @@
         </div>
     </div>
 
-    <!-- 開始畫面 -->
     <div class="modal-container active center-modal" id="startScreen">
         <div class="modal">
-            <div class="emoji-art">🌲🦖🌿</div>
+            <div class="emoji-art">🌲🦕🌿</div>
             <h2>12恐龍捉迷藏</h2>
             <p>MIRROR 森林特別版<br>在療癒的綠林中尋找 12 隻隱藏的恐龍。<br>透過知識考驗與牠們成為朋友，一起回到中央營地！</p>
             <button class="btn" onclick="startGame()">開始森林探索</button>
         </div>
     </div>
 
-    <!-- 問題畫面 -->
     <div class="modal-container" id="questionScreen">
         <div class="modal">
-            <div class="emoji-art">🦖❓🌱</div>
+            <div class="emoji-art">🦕❓🌱</div>
             <h2 id="qTitle">發現野生恐龍！</h2>
             <p id="qText">問題載入中...</p>
             <div id="qOptions"></div>
         </div>
     </div>
 
-    <!-- 營地提示 -->
     <div class="modal-container center-modal" id="campHintScreen">
         <div class="modal">
             <div class="emoji-art">⛺🌳🦖</div>
@@ -240,7 +224,6 @@
         </div>
     </div>
 
-    <!-- 結束畫面 -->
     <div class="modal-container center-modal" id="endScreen">
         <div class="modal">
             <div class="emoji-art">🌟🏞️⛺</div>
@@ -272,18 +255,14 @@
 
     const player = {
         x: 200, y: 200,
-        speed: 4.5, size: 40, emoji: '🥰',
+        speed: 4.5, size: 42, emoji: '👽',
         history: [], 
         caughtDinos: 0
     };
 
-    const camp = {
-        x: WORLD_SIZE / 2,
-        y: WORLD_SIZE / 2,
-        size: 70
-    };
+    const camp = { x: WORLD_SIZE / 2, y: WORLD_SIZE / 2, size: 70 };
     
-    const mirrorQuestions = [
+    const mirrorQuestions = [ /* ... 保持不變 ... */ 
         { q: "姜濤的粉絲名稱是什麼？", options: ["姜糖", "神徒", "爵屎"], ans: 0 },
         { q: "Anson Lo (盧瀚霆) 的專屬應援色是什麼？", options: ["粉紅色", "藍色", "綠色"], ans: 0 },
         { q: "Edan (呂爵安) 在《大叔的愛》中飾演什麼角色？", options: ["田一雄", "凌少牧", "翟國強"], ans: 0 },
@@ -314,12 +293,7 @@
             tx = Math.random() * (WORLD_SIZE - 100) + 50;
             ty = Math.random() * (WORLD_SIZE - 100) + 50;
         } while (Math.hypot(tx - camp.x, ty - camp.y) < 150);
-        
-        trees.push({
-            x: tx, y: ty,
-            emoji: ['🌲','🌳','🌴'][Math.floor(Math.random()*3)],
-            size: Math.random() * 20 + 40
-        });
+        trees.push({ x: tx, y: ty, emoji: ['🌲','🌳','🌴'][Math.floor(Math.random()*3)], size: Math.random() * 20 + 40 });
     }
 
     const dinos = [];
@@ -329,28 +303,15 @@
             dx = Math.random() * (WORLD_SIZE - 200) + 100;
             dy = Math.random() * (WORLD_SIZE - 200) + 100;
         } while (Math.hypot(dx - camp.x, dy - camp.y) < 150);
-        
-        dinos.push({
-            x: dx, y: dy,
-            question: mirrorQuestions[i],
-            state: 'hidden', 
-            bushEmoji: '🌿'
-        });
+        dinos.push({ x: dx, y: dy, question: mirrorQuestions[i], state: 'hidden', bushEmoji: '🌿' });
     }
 
     let currentDinoIndex = -1;
 
-    function handleInputStart(e) {
-        if(gameState !== 'playing') return;
-        input.isDown = true;
-        updateInputPos(e);
-    }
-    function handleInputMove(e) {
-        if(!input.isDown || gameState !== 'playing') return;
-        updateInputPos(e);
-    }
+    // Input handlers (保持不變)
+    function handleInputStart(e) { if(gameState === 'playing'){ input.isDown = true; updateInputPos(e); } }
+    function handleInputMove(e) { if(input.isDown && gameState === 'playing') updateInputPos(e); }
     function handleInputEnd() { input.isDown = false; }
-    
     function updateInputPos(e) {
         const clientX = e.touches ? e.touches[0].clientX : e.clientX;
         const clientY = e.touches ? e.touches[0].clientY : e.clientY;
@@ -387,11 +348,9 @@
         input.isDown = false;
         currentDinoIndex = index;
         const dino = dinos[index];
-        
         document.getElementById('qText').innerText = dino.question.q;
         const optsDiv = document.getElementById('qOptions');
         optsDiv.innerHTML = '';
-        
         dino.question.options.forEach((opt, i) => {
             const btn = document.createElement('button');
             btn.className = 'btn btn-outline';
@@ -399,7 +358,6 @@
             btn.onclick = () => checkAnswer(i);
             optsDiv.appendChild(btn);
         });
-        
         document.getElementById('questionScreen').classList.add('active');
     }
 
@@ -409,7 +367,6 @@
             document.getElementById('questionScreen').classList.remove('active');
             dino.state = 'caught';
             player.caughtDinos++;
-            
             if(player.caughtDinos < 12) {
                 document.getElementById('scoreDisplay').innerText = `🦖 ${player.caughtDinos} / 12`;
                 gameState = 'playing';
@@ -421,10 +378,7 @@
             const title = document.getElementById('qTitle');
             title.innerText = "再試一次吧～";
             title.style.color = "#E07A5F";
-            setTimeout(() => { 
-                title.innerText = "發現野生恐龍！"; 
-                title.style.color = "var(--leaf-green)"; 
-            }, 1600);
+            setTimeout(() => { title.innerText = "發現野生恐龍！"; title.style.color = "var(--leaf-green)"; }, 1600);
         }
     }
 
@@ -437,7 +391,6 @@
     window.closeCampHint = function() {
         document.getElementById('campHintScreen').classList.remove('active');
         gameState = 'playing';
-        
         const scoreDisp = document.getElementById('scoreDisplay');
         scoreDisp.innerText = `🧭 帶朋友回營地 ⛺`;
         scoreDisp.classList.add('highlight');
@@ -450,7 +403,7 @@
         const s = String(timeElapsed % 60).padStart(2, '0');
         document.getElementById('finalTime').innerText = `${m}:${s}`;
         document.getElementById('hud').style.display = 'none';
-        setTimeout(() => { document.getElementById('endScreen').classList.add('active'); }, 500);
+        setTimeout(() => document.getElementById('endScreen').classList.add('active'), 500);
     }
 
     function gameLoop() {
@@ -473,7 +426,7 @@
         }
 
         player.history.unshift({x: player.x, y: player.y});
-        if(player.history.length > 500) player.history.pop();   // 增加歷史長度
+        if(player.history.length > 400) player.history.pop(); // 增加歷史長度讓間距更穩定
 
         camera.x += (player.x - camera.x) * 0.1;
         camera.y += (player.y - camera.y) * 0.1;
@@ -481,15 +434,11 @@
         if(player.caughtDinos < 12) {
             dinos.forEach((dino, index) => {
                 if(dino.state === 'hidden') {
-                    const dist = Math.hypot(player.x - dino.x, player.y - dino.y);
-                    if(dist < 50) triggerQuestion(index);
+                    if(Math.hypot(player.x - dino.x, player.y - dino.y) < 50) triggerQuestion(index);
                 }
             });
         } else {
-            const distToCamp = Math.hypot(player.x - camp.x, player.y - camp.y);
-            if(distToCamp < 60) {
-                endGame();
-            }
+            if(Math.hypot(player.x - camp.x, player.y - camp.y) < 60) endGame();
         }
     }
 
@@ -519,11 +468,10 @@
         ctx.font = `${camp.size}px Arial`;
         ctx.fillText('⛺', camp.x, camp.y);
 
-        // 邊界岩石
+        // 邊界 & 樹木
         ctx.font = `40px Arial`;
         borders.forEach(b => ctx.fillText('🪨', b.x, b.y));
 
-        // 樹木
         trees.forEach(tree => {
             ctx.font = `${tree.size}px Arial`;
             ctx.fillText(tree.emoji, tree.x, tree.y);
@@ -537,12 +485,13 @@
             }
         });
 
-        // 已捉到的恐龍隊伍 - 加大間距
+        // 已捉到的恐龍 - 加大間距，避免貼在一起
         let caughtCount = 0;
         dinos.forEach(dino => {
             if(dino.state === 'caught') {
                 caughtCount++;
-                const historyIndex = caughtCount * 5;   // ← 加大間距（原15 → 28）
+                // 增加間隔倍率，讓恐龍之間保持明顯距離
+                const historyIndex = Math.min(caughtCount * 22, player.history.length - 1);
                 const pos = player.history[historyIndex] || player.history[player.history.length-1];
                 if(pos) {
                     ctx.font = `38px Arial`;
