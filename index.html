@@ -3,565 +3,394 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>圖片卡牌排序遊戲</title>
+    <title>12恐龍捉迷藏 - MIRROR篇</title>
     <style>
+        /* Apple Store UI 風格 */
         :root {
-            --apple-surface: #FFFFFF;
-            --apple-text: #1D1D1F;
-            --apple-text-secondary: #86868B;
-            --apple-blue: #0071E3;
-            --apple-blue-hover: #0077ED;
-            --apple-red: #FF3B30;
-            --apple-green: #34C759;
-            --apple-border: rgba(0, 0, 0, 0.08);
-            --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-            --card-shadow-hover: 0 20px 40px rgba(0, 0, 0, 0.15);
+            --apple-blue: #007AFF;
+            --apple-bg: #F2F2F7;
+            --apple-text: #1C1C1E;
         }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", Roboto, sans-serif;
-            -webkit-font-smoothing: antialiased;
-            background: #ffffff;
-            background: linear-gradient(90deg, rgba(255, 255, 255, 1) 0%, rgba(253, 255, 233, 1) 50%, rgba(212, 244, 255, 1) 100%);
-            margin: 0;
-            padding: 20px 15px 140px; 
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: var(--apple-text);
-            touch-action: manipulation;
-            min-height: 100vh;
-            box-sizing: border-box;
+        * { box-sizing: border-box; user-select: none; -webkit-user-select: none; }
+        body { 
+            margin: 0; padding: 0; 
+            font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+            background-color: #A8D5BA; /* 草地底色 */
+            overflow: hidden; 
+            touch-action: none;
         }
-
-        h1 { 
-            margin: 10px 0 15px; 
-            font-size: 2.2rem; 
-            font-weight: 700;
-            text-align: center; 
-            letter-spacing: -0.5px;
-            background: linear-gradient(135deg, #1d1d1f 0%, #434344 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .stats {
-            display: flex;
-            gap: 15px;
-            font-size: 0.95rem;
-            margin-bottom: 30px;
-            font-weight: 500;
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            padding: 12px 24px;
-            border-radius: 980px;
-            border: 1px solid var(--apple-border);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+        canvas { display: block; }
+        
+        /* UI 疊層 */
+        #ui-layer {
+            position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none; /* 讓點擊穿透到 canvas */
+            display: flex; flex-direction: column; justify-content: space-between;
         }
         
-        .stats span { 
-            font-weight: 600; 
+        /* 頂部狀態欄 */
+        .hud {
+            display: flex; justify-content: space-between; padding: 50px 20px 20px;
+            pointer-events: auto;
+        }
+        .pill {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            padding: 10px 20px; border-radius: 30px;
+            font-weight: 600; color: var(--apple-text);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            font-size: 16px;
         }
 
-        #area-1 {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 10px; /* 稍微縮小間距，配合縮小的槽位 */
-            min-height: 220px;
-            padding: 30px 20px;
-            background: rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 24px;
-            border: 1px solid var(--apple-border);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.04);
-            margin-bottom: 40px;
-            width: 100%;
-            max-width: 1000px;
-            box-sizing: border-box;
-        }
-
-        /* 📌 關鍵優化：將「放這裡」槽位寬度縮小到 50px，高度保持 155px 與卡牌一致 */
-        .slot {
-            width: 50px;
-            height: 155px;
-            border: 1px dashed rgba(0, 0, 0, 0.15); 
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem; /* 字體微調調小以完美契合窄框 */
-            color: var(--apple-text-secondary);
-            writing-mode: vertical-lr; /* 寬度變窄後，文字改為直書更美觀 */
-            letter-spacing: 2px;
-            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-            font-weight: 500;
-            cursor: pointer;
-            background-color: rgba(0, 0, 0, 0.02); 
-            box-sizing: border-box;
-        }
-        
-        .slot:hover, .slot:active {
-            background-color: rgba(0, 113, 227, 0.08);
-            border-color: var(--apple-blue);
-            color: var(--apple-blue);
-            transform: scale(1.05); /* 點擊時輕微放大提示 */
-        }
-
-        .slot.disabled {
-            pointer-events: none;
-            opacity: 0.5;
-        }
-
-        /* 標準卡牌尺寸 */
-        .card {
-            width: 110px;
-            height: 155px;
-            background-color: var(--apple-surface);
-            border: 1px solid rgba(0, 0, 0, 0.06);
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: var(--card-shadow);
-            user-select: none;
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            position: relative;
-            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            box-sizing: border-box;
-        }
-
-        .board-card {
-            cursor: default;
-        }
-        .board-card:nth-child(4n+1) { transform: rotate(-1.5deg) translateY(2px); }
-        .board-card:nth-child(4n+2) { transform: rotate(2deg) translateY(-1px); }
-        .board-card:nth-child(4n+3) { transform: rotate(-1deg) translateY(-3px); }
-        .board-card:nth-child(4n+4) { transform: rotate(1.5deg) translateY(1px); }
-
-        .board-card:hover {
-            transform: scale(1.06) rotate(0deg) translateY(-5px) !important;
-            box-shadow: var(--card-shadow-hover);
-            z-index: 5;
-        }
-
-        .current-card-style {
-            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
-        }
-
-        .card-value-badge {
-            position: absolute;
-            bottom: -6px;
-            right: -6px;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(4px);
-            color: var(--apple-text);
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.85rem;
-            font-weight: 700;
-            border: 1px solid rgba(0,0,0,0.05);
-            box-shadow: 0 3px 8px rgba(0,0,0,0.12);
-        }
-
-        #area-2 {
-            position: fixed;
-            bottom: 0; left: 0; width: 100%;
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-top: 1px solid var(--apple-border);
-            padding: 15px 20px min(25px, env(safe-area-inset-bottom));
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-            z-index: 8;
-            box-shadow: 0 -10px 30px rgba(0,0,0,0.03);
-        }
-        
-        .instruction {
-            font-size: 0.85rem;
-            color: var(--apple-text-secondary);
-            font-weight: 500;
-            text-align: center;
-            letter-spacing: 0.2px;
-        }
-
-        #draw-area {
-            perspective: 800px;
-            height: 170px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            20%, 60% { transform: translateX(-8px) rotate(-1deg); }
-            40%, 80% { transform: translateX(8px) rotate(1deg); }
-        }
-        .shake { 
-            animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both; 
-            border-color: var(--apple-red) !important; 
-        }
-
-        #start-screen, #game-over {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
-            color: var(--apple-text);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+        /* 模態框 (Apple 底部彈出卡片風格) */
+        .modal-container {
+            position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.4);
+            display: flex; align-items: flex-end; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
             z-index: 100;
-            animation: fadeIn 0.5s ease;
         }
+        .modal-container.active {
+            opacity: 1; pointer-events: auto;
+        }
+        .modal {
+            background: white; width: 100%; max-width: 500px;
+            border-radius: 30px 30px 0 0; padding: 40px 24px 50px;
+            transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.1, 0.8, 0.2, 1);
+            text-align: center;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.1);
+        }
+        .modal-container.active .modal { transform: translateY(0); }
+        
+        .modal h2 { margin: 0 0 10px; font-size: 24px; color: var(--apple-text); }
+        .modal p { color: #8E8E93; font-size: 16px; margin-bottom: 24px; line-height: 1.4; }
+        
+        .btn {
+            background: var(--apple-blue); color: white; border: none;
+            width: 100%; padding: 16px; border-radius: 14px;
+            font-size: 17px; font-weight: 600; margin-bottom: 12px;
+            cursor: pointer; transition: background 0.2s;
+        }
+        .btn:active { background: #005bb5; }
+        .btn-outline { background: #F2F2F7; color: var(--apple-blue); }
+        .btn-outline:active { background: #E5E5EA; }
 
-        @keyframes fadeIn {
-            from { opacity: 0; } to { opacity: 1; }
+        /* 中間的開始與結束畫面 */
+        .center-modal {
+            align-items: center; justify-content: center;
         }
+        .center-modal .modal {
+            border-radius: 24px; width: 85%; transform: scale(0.9); padding: 40px 24px;
+        }
+        .modal-container.active .center-modal .modal { transform: scale(1); }
+        
+        .emoji-art { font-size: 60px; margin-bottom: 15px; }
 
-        #game-over { display: none; }
-        
-        h2 { 
-            font-size: 2.6rem; 
-            margin: 0 0 10px 0; 
-            font-weight: 700;
-            letter-spacing: -0.5px;
-        }
-        
-        p { 
-            font-size: 1.1rem; 
-            color: var(--apple-text-secondary);
-            margin-bottom: 35px;
-        }
-        
-        button {
-            padding: 14px 40px;
-            font-size: 1.05rem;
-            background: var(--apple-blue);
-            color: white;
-            border: none;
-            border-radius: 980px;
-            cursor: pointer;
-            font-weight: 600;
-            box-shadow: 0 4px 12px rgba(0, 113, 227, 0.3);
-            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        
-        button:hover { 
-            background: var(--apple-blue-hover); 
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 113, 227, 0.4);
-        }
-        button:active { 
-            transform: translateY(0) scale(0.97); 
-        }
-        button:disabled {
-            background: #E5E5EA; color: #AEAEB2; box-shadow: none; cursor: not-allowed;
-        }
-
-        /* ================= 手機版本 RWD 響應式佈局 ================= */
-        @media (max-width: 600px) {
-            h1 { font-size: 1.7rem; }
-            body { padding: 15px 10px 190px; }
-            
-            #area-1 { 
-                gap: 6px; padding: 15px 8px; border-radius: 20px; min-height: 140px; margin-bottom: 20px;
-            }
-            
-            /* 📌 手機端關鍵優化：將槽位寬度等比例縮小至 34px，高度 100px */
-            .slot { 
-                width: 34px; 
-                height: 100px; 
-                font-size: 0.6rem; 
-                border-radius: 8px; 
-                letter-spacing: 1px;
-            }
-            
-            .card { 
-                width: 70px; height: 100px; border-radius: 12px; 
-            }
-            
-            .board-card:hover { transform: none !important; }
-            .card-value-badge { 
-                width: 22px; height: 22px; font-size: 0.75rem; bottom: -4px; right: -4px; 
-            }
-            
-            #area-2 { padding: 12px 15px min(20px, env(safe-area-inset-bottom)); gap: 8px; }
-            #draw-area { height: 115px; }
-            .instruction { font-size: 0.78rem; line-height: 1.4; }
-            h2 { font-size: 2rem; }
-        }
     </style>
 </head>
 <body>
 
-    <div id="youtube-player" style="display: none;"></div>
+    <canvas id="gameCanvas"></canvas>
 
-    <div id="start-screen">
-        <h2>卡牌排序挑戰</h2>
-        <p>準備好接受挑戰了嗎？</p>
-        <button id="init-btn">開始遊戲</button>
+    <div id="ui-layer">
+        <div class="hud" id="hud" style="display:none;">
+            <div class="pill" id="timerDisplay">⏱️ 00:00</div>
+            <div class="pill" id="scoreDisplay">🦖 0 / 12</div>
+        </div>
     </div>
 
-    <h1>卡牌排序挑戰</h1>
-    <div class="stats">
-        <div>進度：<span id="card-count" style="color: var(--apple-blue);">3 / 10</span></div>
-        <div>錯誤：<span id="mistake-count" style="color: var(--apple-red);">0</span></div>
-        <div>⏱️ 時間：<span id="timer-count" style="color: var(--apple-text);">0秒</span></div>
+    <!-- 開始遊戲畫面 -->
+    <div class="modal-container active center-modal" id="startScreen">
+        <div class="modal">
+            <div class="emoji-art">🌲💖🦖</div>
+            <h2>12恐龍捉迷藏</h2>
+            <p>MIRROR 特別版<br>在森林中尋找 12 隻隱藏的恐龍。<br>答對問題即可收服牠們！</p>
+            <button class="btn" onclick="startGame()">開始遊戲</button>
+        </div>
     </div>
 
-    <div id="area-1"></div>
-
-    <div id="area-2">
-        <div class="instruction">直接點擊上方窄條「放這裡」槽位判定放入</div>
-        <div id="draw-area"></div>
+    <!-- 問題畫面 -->
+    <div class="modal-container" id="questionScreen">
+        <div class="modal">
+            <div class="emoji-art">🦖❓</div>
+            <h2 id="qTitle">發現野生恐龍！</h2>
+            <p id="qText">問題載入中...</p>
+            <div id="qOptions">
+                <!-- 按鈕動態生成 -->
+            </div>
+        </div>
     </div>
 
-    <div id="game-over">
-        <h2>挑戰完成</h2>
-        <p>總計時：<strong id="final-time" style="color: var(--apple-blue); font-size: 1.4rem;">0秒</strong></p>
-        <p>您的總錯誤次數為：<strong id="final-mistakes" style="color: var(--apple-red); font-size: 1.4rem;">0</strong> 次</p>
-        <button onclick="startGame()">再玩一次</button>
+    <!-- 結束畫面 -->
+    <div class="modal-container center-modal" id="endScreen">
+        <div class="modal">
+            <div class="emoji-art">🎉🏆🦖</div>
+            <h2>任務完成！</h2>
+            <p>你成功找齊了 12 隻 MIRROR 恐龍！<br>總耗時：<strong id="finalTime">00:00</strong></p>
+            <button class="btn" onclick="location.reload()">再玩一次</button>
+        </div>
     </div>
 
-    <script>
-        // --- YouTube IFrame API 區塊 ---
-        let ytPlayer;
-        let isPlayerReady = false;
+<script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // 設定畫布尺寸
+    function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
 
-        const tag = document.createElement('script');
-        tag.src = "https://www.youtube.com/iframe_api";
-        const firstScriptTag = document.getElementsByTagName('script')[0];
-        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    // 遊戲狀態與參數
+    const WORLD_SIZE = 2000;
+    let gameState = 'start'; // start, playing, question, end
+    let startTime = 0;
+    let timerInterval = null;
+    let timeElapsed = 0;
+    
+    // 鏡頭與控制
+    let camera = { x: WORLD_SIZE/2, y: WORLD_SIZE/2 };
+    let input = { isDown: false, x: 0, y: 0 };
 
-        function onYouTubeIframeAPIReady() {
-            ytPlayer = new YT.Player('youtube-player', {
-                height: '0', width: '0', videoId: 'x2fAnFXDj9Q',
-                playerVars: { 'autoplay': 0, 'controls': 0, 'origin': window.location.origin },
-                events: {
-                    'onReady': () => { 
-                        isPlayerReady = true; 
-                        document.getElementById('init-btn').innerText = '開始遊戲';
-                        document.getElementById('init-btn').disabled = false;
-                    }
-                }
-            });
-        }
+    // 角色設定
+    const player = {
+        x: WORLD_SIZE / 2, y: WORLD_SIZE / 2,
+        speed: 4, size: 40, emoji: '💖',
+        history: [], // 用於記錄路徑，實現尾隨效果
+        caughtDinos: 0
+    };
+    
+    // MIRROR 題庫 (12題)
+    const mirrorQuestions = [
+        { q: "姜濤的粉絲名稱是什麼？", options: ["姜糖", "神徒", "爵屎"], ans: 0 },
+        { q: "Anson Lo (盧瀚霆) 的專屬應援色是什麼？", options: ["粉紅色", "藍色", "綠色"], ans: 0 },
+        { q: "Edan (呂爵安) 在《大叔的愛》中飾演什麼角色？", options: ["田一雄", "凌少牧", "翟國強"], ans: 0 },
+        { q: "Ian (陳卓賢) 在入行前是哪一項運動的香港代表隊成員？", options: ["籃球", "排球", "足球"], ans: 1 },
+        { q: "哪一首是 Jer (柳應廷) 的「物語系列」歌曲？", options: ["水刑物語", "狂人日記", "砂之器"], ans: 0 },
+        { q: "AK 的全名是？", options: ["江𤒹生", "汪𤒹生", "江華生"], ans: 0 },
+        { q: "Lokman (楊樂文) 在 MIRROR 中的職位是？", options: ["隊長", "副隊長", "忙內"], ans: 0 },
+        { q: "Stanley (邱士縉) 有什麼稱號？", options: ["大表哥", "老虎仔", "皮皮"], ans: 0 },
+        { q: "Frankie (陳瑞輝) 的別稱是什麼？", options: ["皮皮", "蛋白", "柳柳"], ans: 0 },
+        { q: "Tiger (邱傲然) 最擅長的舞蹈/武術是？", options: ["拉丁舞", "芭蕾舞", "踢踏舞"], ans: 0 },
+        { q: "Alton (王智德) 的經典金句是？", options: ["尋求無悔真生活", "焫焫焫焫焫著", "肌肉就是力量"], ans: 0 },
+        { q: "Jeremy (李駿傑) 的粉絲名稱是？", options: ["Unicorn", "柳柳粉", "蛋白粉"], ans: 0 }
+    ];
 
-        document.getElementById('init-btn').addEventListener('click', () => {
-            document.getElementById('start-screen').style.display = 'none';
-            startGame();
+    // 生成場景與恐龍
+    const trees = [];
+    for(let i=0; i<150; i++) {
+        trees.push({
+            x: Math.random() * WORLD_SIZE, y: Math.random() * WORLD_SIZE,
+            emoji: ['🌲','🌳','🌴'][Math.floor(Math.random()*3)],
+            size: Math.random() * 20 + 40
+        });
+    }
+
+    const dinos = [];
+    for(let i=0; i<12; i++) {
+        dinos.push({
+            x: Math.random() * (WORLD_SIZE - 200) + 100,
+            y: Math.random() * (WORLD_SIZE - 200) + 100,
+            question: mirrorQuestions[i],
+            state: 'hidden', // hidden, caught
+            bushEmoji: '🌿'
+        });
+    }
+
+    let currentDinoIndex = -1;
+
+    // 觸控與滑鼠事件 (統一處理)
+    function handleInputStart(e) {
+        if(gameState !== 'playing') return;
+        input.isDown = true;
+        updateInputPos(e);
+    }
+    function handleInputMove(e) {
+        if(!input.isDown || gameState !== 'playing') return;
+        updateInputPos(e);
+    }
+    function handleInputEnd() { input.isDown = false; }
+    
+    function updateInputPos(e) {
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        // 將螢幕坐標轉換為世界坐標的目標方向
+        input.x = clientX - canvas.width/2;
+        input.y = clientY - canvas.height/2;
+    }
+
+    canvas.addEventListener('mousedown', handleInputStart);
+    canvas.addEventListener('mousemove', handleInputMove);
+    window.addEventListener('mouseup', handleInputEnd);
+    canvas.addEventListener('touchstart', handleInputStart, {passive: false});
+    canvas.addEventListener('touchmove', handleInputMove, {passive: false});
+    window.addEventListener('touchend', handleInputEnd);
+
+    // 遊戲開始
+    window.startGame = function() {
+        document.getElementById('startScreen').classList.remove('active');
+        document.getElementById('hud').style.display = 'flex';
+        gameState = 'playing';
+        startTime = Date.now();
+        timerInterval = setInterval(updateTimer, 1000);
+        gameLoop();
+    }
+
+    function updateTimer() {
+        if(gameState !== 'playing') return;
+        timeElapsed = Math.floor((Date.now() - startTime) / 1000);
+        const m = String(Math.floor(timeElapsed / 60)).padStart(2, '0');
+        const s = String(timeElapsed % 60).padStart(2, '0');
+        document.getElementById('timerDisplay').innerText = `⏱️ ${m}:${s}`;
+    }
+
+    // 觸發問題
+    function triggerQuestion(index) {
+        gameState = 'question';
+        input.isDown = false;
+        currentDinoIndex = index;
+        const dino = dinos[index];
+        
+        document.getElementById('qText').innerText = dino.question.q;
+        const optsDiv = document.getElementById('qOptions');
+        optsDiv.innerHTML = '';
+        
+        dino.question.options.forEach((opt, i) => {
+            const btn = document.createElement('button');
+            btn.className = 'btn btn-outline';
+            btn.innerText = opt;
+            btn.onclick = () => checkAnswer(i);
+            optsDiv.appendChild(btn);
         });
         
-        document.getElementById('init-btn').innerText = '載入音樂中...';
-        document.getElementById('init-btn').disabled = true;
+        document.getElementById('questionScreen').classList.add('active');
+    }
 
-        const allCardsData = [
-            { id: 1, value: 1, src: 'images/01.png', ytId: 'iV4qduCR3MU' },
-            { id: 2, value: 2, src: 'images/02.png', ytId: 'eG5Zm8ZAutI' },
-            { id: 3, value: 3, src: 'images/03.png', ytId: 'OTnVTUdyT30' },
-            { id: 4, value: 4, src: 'images/04.png', ytId: 'iV4qduCR3MU' }, 
-            { id: 5, value: 5, src: 'images/05.png', ytId: 'eG5Zm8ZAutI' }, 
-            { id: 6, value: 6, src: 'images/06.png', ytId: 'OTnVTUdyT30' }, 
-            { id: 7, value: 7, src: 'images/07.png', ytId: 'iV4qduCR3MU' }, 
-            { id: 8, value: 8, src: 'images/08.png', ytId: 'eG5Zm8ZAutI' }, 
-            { id: 9, value: 9, src: 'images/09.png', ytId: 'OTnVTUdyT30' }, 
-            { id: 10, value: 10, src: 'images/10.png', ytId: 'iV4qduCR3MU' },
-            { id: 11, value: 11, src: 'images/11.png', ytId: 'eG5Zm8ZAutI' },
-            { id: 12, value: 12, src: 'images/12.png', ytId: 'OTnVTUdyT30' },
-            { id: 13, value: 13, src: 'images/13.png', ytId: 'iV4qduCR3MU' },
-            { id: 14, value: 14, src: 'images/14.png', ytId: 'eG5Zm8ZAutI' },
-            { id: 15, value: 15, src: 'images/15.png', ytId: 'OTnVTUdyT30' },
-            { id: 16, value: 16, src: 'images/16.png', ytId: 'iV4qduCR3MU' },
-            { id: 17, value: 17, src: 'images/17.png', ytId: 'eG5Zm8ZAutI' },
-            { id: 18, value: 18, src: 'images/18.png', ytId: 'OTnVTUdyT30' },
-            { id: 19, value: 19, src: 'images/19.png', ytId: 'iV4qduCR3MU' },
-            { id: 20, value: 20, src: 'images/20.png', ytId: 'eG5Zm8ZAutI' },
-            { id: 21, value: 21, src: 'images/21.png', ytId: 'OTnVTUdyT30' },
-            { id: 22, value: 22, src: 'images/22.png', ytId: 'iV4qduCR3MU' },
-            { id: 23, value: 23, src: 'images/23.png', ytId: 'eG5Zm8ZAutI' },
-            { id: 24, value: 24, src: 'images/24.png', ytId: 'OTnVTUdyT30' },
-            { id: 25, value: 25, src: 'images/25.png', ytId: 'iV4qduCR3MU' },
-            { id: 26, value: 26, src: 'images/26.png', ytId: 'eG5Zm8ZAutI' },
-            { id: 27, value: 27, src: 'images/27.png', ytId: 'OTnVTUdyT30' },
-            { id: 28, value: 28, src: 'images/28.png', ytId: 'iV4qduCR3MU' },
-            { id: 29, value: 29, src: 'images/29.png', ytId: 'eG5Zm8ZAutI' },
-            { id: 30, value: 30, src: 'images/30.png', ytId: 'OTnVTUdyT30' }
-        ];
-
-        let deck = []; let board = []; let currentCard = null; let mistakes = 0;
-        let timerInterval = null; let elapsedSeconds = 0;
-
-        const TARGET_CARDS = 10; const TOTAL_CARDS_IN_DB = 30; 
-
-        const area1 = document.getElementById('area-1');
-        const drawArea = document.getElementById('draw-area');
-        const mistakeCountEl = document.getElementById('mistake-count');
-        const cardCountEl = document.getElementById('card-count');
-        const timerCountEl = document.getElementById('timer-count');
-        const gameOverScreen = document.getElementById('game-over');
-
-        function startGame() {
-            deck = [...allCardsData]; shuffleDeck(deck);
-            board = []; mistakes = 0;
-            updateStats();
-            gameOverScreen.style.display = 'none';
-
-            for(let i = 0; i < 3; i++) { board.push(deck.pop()); }
-            board.sort((a, b) => a.value - b.value);
-
-            drawNewCard(); renderBoard();
-            startTimer();
+    function checkAnswer(selectedIndex) {
+        const dino = dinos[currentDinoIndex];
+        if(selectedIndex === dino.question.ans) {
+            // 答對
+            document.getElementById('questionScreen').classList.remove('active');
+            dino.state = 'caught';
+            player.caughtDinos++;
+            document.getElementById('scoreDisplay').innerText = `🦖 ${player.caughtDinos} / 12`;
+            gameState = 'playing';
+            
+            if(player.caughtDinos >= 12) {
+                endGame();
+            }
+        } else {
+            // 答錯提示 (簡單震動或改字)
+            const title = document.getElementById('qTitle');
+            title.innerText = "答錯了！再試一次！";
+            title.style.color = "#FF3B30";
+            setTimeout(() => { title.innerText = "發現野生恐龍！"; title.style.color = "var(--apple-text)"; }, 1500);
         }
+    }
 
-        function shuffleDeck(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
+    function endGame() {
+        gameState = 'end';
+        clearInterval(timerInterval);
+        const m = String(Math.floor(timeElapsed / 60)).padStart(2, '0');
+        const s = String(timeElapsed % 60).padStart(2, '0');
+        document.getElementById('finalTime').innerText = `${m}:${s}`;
+        document.getElementById('hud').style.display = 'none';
+        setTimeout(() => {
+            document.getElementById('endScreen').classList.add('active');
+        }, 500);
+    }
+
+    // 核心循環
+    function gameLoop() {
+        update();
+        draw();
+        if(gameState !== 'end') {
+            requestAnimationFrame(gameLoop);
+        }
+    }
+
+    function update() {
+        if(gameState !== 'playing') return;
+
+        // 角色移動
+        if(input.isDown) {
+            const dist = Math.hypot(input.x, input.y);
+            if(dist > 5) {
+                const dx = (input.x / dist) * player.speed;
+                const dy = (input.y / dist) * player.speed;
+                player.x = Math.max(20, Math.min(WORLD_SIZE - 20, player.x + dx));
+                player.y = Math.max(20, Math.min(WORLD_SIZE - 20, player.y + dy));
             }
         }
 
-        function drawNewCard() {
-            currentCard = deck.pop(); renderDrawnCard();
-            if (isPlayerReady && currentCard && currentCard.ytId) {
-                ytPlayer.loadVideoById(currentCard.ytId); ytPlayer.playVideo();
-            }
-        }
+        // 記錄歷史位置 (貪吃蛇跟隨)
+        player.history.unshift({x: player.x, y: player.y});
+        if(player.history.length > 300) player.history.pop(); // 限制歷史長度避免內存洩漏
 
-        function updateStats() {
-            mistakeCountEl.innerText = mistakes;
-            cardCountEl.innerText = `${board.length} / ${TARGET_CARDS}`;
-        }
+        // 平滑相機跟隨 (Lerp)
+        camera.x += (player.x - camera.x) * 0.1;
+        camera.y += (player.y - camera.y) * 0.1;
 
-        function startTimer() {
-            clearInterval(timerInterval);
-            elapsedSeconds = 0;
-            timerCountEl.innerText = "0秒";
-            timerInterval = setInterval(() => {
-                elapsedSeconds++;
-                timerCountEl.innerText = `${elapsedSeconds}秒`;
-            }, 1000);
-        }
-
-        function renderBoard() {
-            area1.innerHTML = '';
-            for (let i = 0; i <= board.length; i++) {
-                let showSlot = true;
-                if (i > 0 && i < board.length) {
-                    if (board[i].value - board[i-1].value <= 1) showSlot = false;
-                } else if (i === 0 && board.length > 0) {
-                    if (board[0].value === 1) showSlot = false;
-                } else if (i === board.length && board.length > 0) {
-                    if (board[board.length - 1].value === TOTAL_CARDS_IN_DB) showSlot = false;
-                }
-
-                if (showSlot) {
-                    const slot = document.createElement('div');
-                    slot.className = 'slot'; slot.innerText = '放這裡'; slot.dataset.index = i;
-                    
-                    slot.addEventListener('click', (e) => {
-                        if (currentCard) processPlacement(parseInt(e.currentTarget.dataset.index));
-                    });
-                    
-                    slot.addEventListener('dragover', handleDragOver);
-                    slot.addEventListener('dragleave', handleDragLeave);
-                    slot.addEventListener('drop', handleDrop);
-                    
-                    area1.appendChild(slot);
-                }
-
-                if (i < board.length) {
-                    const cardData = board[i];
-                    const card = document.createElement('div');
-                    card.className = 'card board-card';
-                    card.style.backgroundImage = `url('${cardData.src}')`;
-                    const badge = document.createElement('div');
-                    badge.className = 'card-value-badge'; badge.innerText = cardData.value;
-                    card.appendChild(badge);
-                    area1.appendChild(card);
+        // 碰撞偵測 (尋找恐龍)
+        dinos.forEach((dino, index) => {
+            if(dino.state === 'hidden') {
+                const dist = Math.hypot(player.x - dino.x, player.y - dino.y);
+                if(dist < 50) {
+                    triggerQuestion(index);
                 }
             }
-        }
+        });
+    }
 
-        function renderDrawnCard() {
-            drawArea.innerHTML = '';
-            const card = document.createElement('div');
-            card.className = 'card current-card-style'; card.draggable = true; card.id = 'current-drag-card';
-            card.style.backgroundImage = `url('${currentCard.src}')`;
+    function draw() {
+        // 清理背景
+        ctx.fillStyle = '#A8D5BA';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            card.addEventListener('dragstart', (e) => {
-                e.dataTransfer.setData('text/plain', currentCard.id);
-                setTimeout(() => card.style.opacity = '0.5', 0);
-            });
-            card.addEventListener('dragend', () => card.style.opacity = '1');
-            drawArea.appendChild(card);
-        }
+        ctx.save();
+        // 應用相機位移 (讓角色置中)
+        ctx.translate(canvas.width/2 - camera.x, canvas.height/2 - camera.y);
 
-        function handleDragOver(e) { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }
-        function handleDragLeave(e) { e.currentTarget.classList.remove('drag-over'); }
-        function handleDrop(e) {
-            e.preventDefault(); const slot = e.currentTarget;
-            slot.classList.remove('drag-over'); processPlacement(parseInt(slot.dataset.index));
-        }
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
 
-        function processPlacement(dropIndex) {
-            const correctIndex = getCorrectIndex(currentCard);
-            const dragCardElement = document.getElementById('current-drag-card');
+        // 繪製樹木
+        trees.forEach(tree => {
+            ctx.font = `${tree.size}px Arial`;
+            ctx.fillText(tree.emoji, tree.x, tree.y);
+        });
 
-            if (dropIndex === correctIndex) {
-                board.splice(correctIndex, 0, currentCard);
-                updateStats();
-                if (board.length >= TARGET_CARDS) {
-                    renderBoard(); setTimeout(endGame, 300);
-                } else {
-                    drawNewCard(); renderBoard();
-                }
-            } else {
-                mistakes++; updateStats();
-                
-                const allSlots = document.querySelectorAll('.slot');
-                allSlots.forEach(s => s.classList.add('disabled'));
-                
-                if(dragCardElement) {
-                    dragCardElement.classList.add('shake');
-                    setTimeout(() => {
-                        dragCardElement.classList.remove('shake');
-                        allSlots.forEach(s => s.classList.remove('disabled'));
-                    }, 400); 
+        // 繪製隱藏的恐龍(草叢)
+        dinos.forEach(dino => {
+            if(dino.state === 'hidden') {
+                ctx.font = `50px Arial`;
+                ctx.fillText(dino.bushEmoji, dino.x, dino.y);
+            }
+        });
+
+        // 繪製跟隨的恐龍
+        let caughtCount = 0;
+        dinos.forEach(dino => {
+            if(dino.state === 'caught') {
+                caughtCount++;
+                // 根據抓到的順序，從歷史陣列中提取延遲位置
+                const historyIndex = caughtCount * 15; 
+                const pos = player.history[historyIndex] || player.history[player.history.length-1];
+                if(pos) {
+                    ctx.font = `35px Arial`;
+                    ctx.fillText('🦖', pos.x, pos.y);
                 }
             }
-        }
+        });
 
-        function getCorrectIndex(cardToPlace) {
-            for (let i = 0; i < board.length; i++) {
-                if (cardToPlace.value < board[i].value) return i;
-            }
-            return board.length;
-        }
+        // 繪製主角 💖
+        ctx.font = `${player.size}px Arial`;
+        ctx.fillText(player.emoji, player.x, player.y);
 
-        function endGame() {
-            clearInterval(timerInterval);
-            document.getElementById('final-time').innerText = `${elapsedSeconds}秒`;
-            document.getElementById('final-mistakes').innerText = mistakes;
-            gameOverScreen.style.display = 'flex';
-            if (isPlayerReady) ytPlayer.pauseVideo();
-        }
-    </script>
+        ctx.restore();
+    }
+</script>
 </body>
 </html>
