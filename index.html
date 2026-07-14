@@ -521,7 +521,7 @@
         dinos.forEach(dino => {
             if(dino.state === 'caught') {
                 caughtCount++;
-                const historyIndex = caughtCount * 15; 
+                const historyIndex = caughtCount * 8; 
                 const pos = player.history[historyIndex] || player.history[player.history.length-1];
                 if(pos) {
                     ctx.fillText('🦖', ~~pos.x, ~~pos.y); // 坐標取整
