@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>12恐龍捉迷藏 - Egarden 藝術置中版</title>
+    <title>12恐龍捉迷藏 - Egarden 藝術精雕版</title>
     <style>
         /* Egarden 親自然藝術設計系統 */
         :root {
@@ -86,8 +86,8 @@
             position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(26, 47, 22, 0.45); 
             display: flex; 
-            align-items: center;      /* 🎯 徹底改為垂直居中 */
-            justify-content: center;   /* 🎯 徹底改為水平居中 */
+            align-items: center;      /* 垂直居中 */
+            justify-content: center;   /* 水平居中 */
             opacity: 0; pointer-events: none; 
             transition: opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1);
             z-index: 100;
@@ -97,7 +97,7 @@
             opacity: 1; pointer-events: auto;
         }
         
-        /* 🎯 Egarden 懸浮藝術置中卡片排版 */
+        /* Egarden 懸浮藝術置中卡片排版 */
         .modal {
             background: var(--biophilic-paper);
             width: 90%; max-width: 440px;
@@ -111,7 +111,7 @@
             box-shadow: 0 20px 60px rgba(15, 28, 13, 0.25);
             position: relative;
             
-            /* 核心防遮擋：限制卡片最高佔螢幕 80%，超出時內部滾動，100%看得到第三個答案 */
+            /* 核心防遮擋：限制卡片最高佔螢幕 80%，超出時內部滾動 */
             max-height: 80vh; 
             overflow-y: auto; 
             -webkit-overflow-scrolling: touch; 
@@ -119,7 +119,7 @@
         
         /* Egarden 植物線稿背景裝飾效果 */
         .modal::before {
-            content: "🌿";
+            content: "🌿"; /* 這個是 UI 裡的圖案，不會有動畫 */
             position: absolute; top: 25px; right: 30px;
             font-size: 32px; opacity: 0.12;
             filter: grayscale(1);
@@ -133,6 +133,7 @@
         }
         .center-text-modal .modal::before { display: none; }
         
+        /* 這裡的 Emoji 也是 DOM 元素，保持靜止 */
         .emoji-art { font-size: 52px; margin-bottom: 20px; display: inline-block; filter: drop-shadow(0 8px 15px rgba(58,90,64,0.15)); }
         
         /* Egarden 大字號藝術標題與充足留白 */
@@ -164,7 +165,7 @@
             line-height: 1.65; 
         }
         
-        /* 🎯 Egarden 有機曲線按鈕設計（兩端圓角不對稱，節奏 180ms） */
+        /* Egarden 有機曲線按鈕設計（兩端圓角不對稱，節奏 180ms） */
         .btn {
             background: linear-gradient(135deg, var(--egarden-green-dark), var(--egarden-green-leaf));
             color: #FDFBF7; border: none;
@@ -263,7 +264,9 @@
             <h2>旅程圓滿結束</h2>
             <span class="subtitle">CONGRATULATIONS</span>
             <p>你已成功將所有 MIRROR 恐龍帶回綠色營地！<br>漫步總耗時：<strong id="finalTime">00:00</strong></p>
-            <button class="btn" onclick="location.reload()">重新探索空間</button>
+            
+            <button class="btn" onclick="window.open('https://lnk.to/MirrorKIZUNA?utm_source=ig&utm_medium=social&utm_content=link_in_bio&fbclid=PAdGRleATEEeZwZG9mAmV4dG4DYWVtAjExAHNydGMGYXBwX2lkDzEyNDAyNDU3NDI4NzQxNAABpw98_Vw8Wh6gpeMbUOG7oIkDK_nEh7IvYqLIOhcddj1uX7v8-DbbaOiKbYrk_aem_BVDg2inBUqrfrzlXRv1PtQ', '_blank')">🎵 聆聽 MIRROR - KIZUNA</button>
+            <button class="btn" style="background: rgba(58, 90, 64, 0.08); color: var(--egarden-green-dark); box-shadow: none;" onclick="location.reload()">重新探索空間</button>
         </div>
     </div>
 
@@ -289,19 +292,24 @@
     let timerInterval = null;
     let timeElapsed = 0;
     
-    let camera = { x: 200, y: 200 };
+    // 設置大地圖正中央 (⛺ 營地) 的坐標
+    const CAMP_CENTER_X = WORLD_SIZE / 2;
+    const CAMP_CENTER_Y = WORLD_SIZE / 2;
+
+    let camera = { x: CAMP_CENTER_X, y: CAMP_CENTER_Y };
     let input = { isDown: false, x: 0, y: 0 };
 
     const player = {
-        x: 200, y: 200,
+        x: CAMP_CENTER_X, 
+        y: CAMP_CENTER_Y,
         speed: 4.5, size: 40, emoji: '🌼',
-        history: [{x: 200, y: 200}], 
+        history: [{x: CAMP_CENTER_X, y: CAMP_CENTER_Y}], 
         caughtDinos: 0
     };
 
     const camp = {
-        x: WORLD_SIZE / 2,
-        y: WORLD_SIZE / 2,
+        x: CAMP_CENTER_X,
+        y: CAMP_CENTER_Y,
         size: 70
     };
     
@@ -423,10 +431,16 @@
     bgCtx.stroke();
     bgCtx.setLineDash([]);
     
+    // ⛺ 營地主體（加上影子）
+    bgCtx.save();
+    bgCtx.shadowColor = 'rgba(26, 47, 22, 0.35)';
+    bgCtx.shadowBlur = 10;
+    bgCtx.shadowOffsetY = 6;
     bgCtx.textAlign = 'center';
     bgCtx.textBaseline = 'middle';
     bgCtx.font = `${camp.size}px Arial`;
     bgCtx.fillText('⛺', camp.x, camp.y);
+    bgCtx.restore();
 
     // 邊界岩石 🪨
     bgCtx.font = `40px Arial`;
@@ -434,10 +448,15 @@
         bgCtx.fillText('🪨', b.x, b.y);
     });
 
-    // 樹木 🌲
+    // 樹木 🌲（加上微弱立體影子）
     trees.forEach(tree => {
+        bgCtx.save();
+        bgCtx.shadowColor = 'rgba(10, 20, 8, 0.4)';
+        bgCtx.shadowBlur = 12;
+        bgCtx.shadowOffsetY = 8;
         bgCtx.font = `${tree.size}px Arial`;
         bgCtx.fillText(tree.emoji, tree.x, tree.y);
+        bgCtx.restore();
     });
 
     let currentDinoIndex = -1;
@@ -616,31 +635,66 @@
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
 
-        // 🌿 隱藏草叢
-        ctx.font = '50px Arial';
-        dinos.forEach(dino => {
+        // 🎯 🌿 隱藏草叢 (加上 Canvas 原生 Sway 搖擺與呼吸動畫)
+        dinos.forEach((dino, index) => {
             if(dino.state === 'hidden') {
-                ctx.fillText(dino.bushEmoji, dino.x, dino.y);
+                ctx.save();
+                
+                // 計算動畫參數 (利用 Date.now 產生連續變化)
+                const timeFactor = Date.now() * 0.002 + index; 
+                const scaleEffect = 1 + Math.sin(timeFactor) * 0.05; // 輕微呼吸縮放
+                const swayAngle = Math.sin(timeFactor * 1.2) * 0.08; // 隨風左右搖擺角度
+                const shadowGlow = 8 + Math.sin(timeFactor) * 4; 
+                
+                ctx.shadowColor = 'rgba(26, 47, 22, 0.35)';
+                ctx.shadowBlur = shadowGlow;
+                ctx.shadowOffsetY = 4;
+                
+                // 平移到草叢中心並旋轉，實現 CSS 的 transform: rotate 效果
+                ctx.translate(dino.x, dino.y);
+                ctx.rotate(swayAngle);
+                
+                ctx.font = `${36 * scaleEffect}px Arial`;
+                ctx.fillText(dino.bushEmoji, 0, 0); // 坐標為 0，因為已經 translate 過去了
+                
+                ctx.restore();
             }
         });
 
-        // 🦖 跟隨隊伍
+        // 🎯 🦖 已捉到的恐龍隊伍 (加上 Canvas 原生 Bounce 彈跳動畫)
         let caughtCount = 0;
-        ctx.font = '35px Arial';
-        dinos.forEach(dino => {
+        dinos.forEach((dino, index) => {
             if(dino.state === 'caught') {
                 caughtCount++;
                 const historyIndex = caughtCount * 15; 
                 const pos = player.history[historyIndex] || player.history[player.history.length-1];
                 if(pos) {
-                    ctx.fillText('🦖', ~~pos.x, ~~pos.y);
+                    ctx.save();
+                    
+                    // 計算走路彈跳參數 (用絕對值確保總是往上彈)
+                    const bounceOffset = Math.abs(Math.sin(Date.now() * 0.005 + caughtCount)) * -6; 
+                    
+                    ctx.shadowColor = 'rgba(26, 47, 22, 0.28)';
+                    ctx.shadowBlur = 8;
+                    ctx.shadowOffsetY = 5 - bounceOffset; // 影子跟著彈跳自動變遠
+                    
+                    ctx.font = '35px Arial';
+                    // Y軸加上彈跳偏移量，實現 CSS 的 translateY 效果
+                    ctx.fillText('🦖', ~~pos.x, ~~(pos.y + bounceOffset)); 
+                    
+                    ctx.restore();
                 }
             }
         });
 
-        // 🌼 主角
+        // 🌼 主角雛菊
+        ctx.save();
+        ctx.shadowColor = 'rgba(26, 47, 22, 0.32)';
+        ctx.shadowBlur = 10;
+        ctx.shadowOffsetY = 6;
         ctx.font = `${player.size}px Arial`;
         ctx.fillText(player.emoji, ~~player.x, ~~player.y);
+        ctx.restore();
 
         ctx.restore();
     }
