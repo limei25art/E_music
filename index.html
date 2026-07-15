@@ -744,7 +744,7 @@
                 // 計算動畫參數 (利用 Date.now 產生連續變化)
                 const timeFactor = Date.now() * 0.002 + index; 
                 const scaleEffect = 1 + Math.sin(timeFactor) * 0.05; // 輕微呼吸縮放
-                const swayAngle = Math.sin(timeFactor * 1.2) * 0.08; // 隨風左右搖擺角度
+                const swayAngle = Math.sin(timeFactor * 1.8) * 0.3; // 隨風左右搖擺角度
                 const shadowGlow = 8 + Math.sin(timeFactor) * 4; 
                 
                 ctx.shadowColor = 'rgba(26, 47, 22, 0.35)';
