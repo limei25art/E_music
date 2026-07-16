@@ -248,7 +248,6 @@
 
     <div class="noise-overlay"></div>
 
-    <!-- 📱 虛擬搖桿 HTML 節點 -->
     <div id="joystick" class="joystick-container">
         <div id="joystick-knob" class="joystick-knob"></div>
     </div>
@@ -412,20 +411,82 @@
         }
     }
 
-    const dinos = [];
-    for(let i=0; i<12; i++) {
-        let dx, dy;
-        do {
-            dx = Math.random() * (WORLD_SIZE - 200) + 100;
-            dy = Math.random() * (WORLD_SIZE - 200) + 100;
-        } while (Math.hypot(dx - camp.x, dy - camp.y) < 150);
-        
-        dinos.push({
-            x: dx, y: dy,
+    // --- 🎯 恐龍/草叢數據初始化設計 ---
+    // 我們將 12 隻恐龍在底層洗牌，每次需要生成新草叢時，從中抽取一隻尚未現身的恐龍放入遊戲中
+    const shuffledDinosPool = [];
+    for(let i = 0; i < 12; i++) {
+        shuffledDinosPool.push({
+            id: i,
             question: mirrorQuestions[i],
-            state: 'hidden', 
             bushEmoji: '🍀'
         });
+    }
+    // 打亂池子順序，確保每次玩遇到的恐龍順序不同
+    shuffledDinosPool.sort(() => Math.random() - 0.5);
+
+    const dinos = []; // 目前在地圖上顯示的草叢（最多同時存在 6 個）
+
+    // 隨機計算一個與現有物件（其他草叢、樹木、大本營、主角）皆保持足夠安全距離的「極分散位置」
+    function getRandomDispersedPosition() {
+        let rx, ry;
+        let attempts = 0;
+        let valid = false;
+        
+        while (!valid && attempts < 150) {
+            rx = Math.random() * (WORLD_SIZE - 260) + 130; // 避免太貼近邊緣
+            ry = Math.random() * (WORLD_SIZE - 260) + 130;
+            
+            valid = true;
+            
+            // 1. 與營地 ⛺ 保持大於 250px 距離（確保大本營清空）
+            if (Math.hypot(rx - camp.x, ry - camp.y) < 250) valid = false;
+            
+            // 2. 與主角目前位置保持至少 250px 距離（避免生成在頭上）
+            if (valid && Math.hypot(rx - player.x, ry - player.y) < 250) valid = false;
+            
+            // 3. 與地圖上其他現有草叢保持至少 200px 的超開闊距離（分散配置）
+            if (valid) {
+                for (let activeDino of dinos) {
+                    if (activeDino.state === 'hidden' && Math.hypot(rx - activeDino.x, ry - activeDino.y) < 200) {
+                        valid = false;
+                        break;
+                    }
+                }
+            }
+            
+            // 4. 與障礙大樹 🌲 保持基本距離（避免完全重合難以察覺）
+            if (valid) {
+                for (let tree of trees) {
+                    if (Math.hypot(rx - tree.x, ry - tree.y) < 65) {
+                        valid = false;
+                        break;
+                    }
+                }
+            }
+            attempts++;
+        }
+        return { x: rx, y: ry };
+    }
+
+    // 將一隻恐龍實體放入地圖（包裝成隱藏草叢 🍀）
+    function spawnDino() {
+        if (shuffledDinosPool.length === 0) return;
+        const rawDino = shuffledDinosPool.pop();
+        const pos = getRandomDispersedPosition();
+        
+        dinos.push({
+            id: rawDino.id,
+            x: pos.x,
+            y: pos.y,
+            question: rawDino.question,
+            state: 'hidden',
+            bushEmoji: rawDino.bushEmoji
+        });
+    }
+
+    // 初始化：一開始地圖上只出現 6 個 🍀
+    for(let i = 0; i < 6; i++) {
+        spawnDino();
     }
 
     // --- 離屏畫布高性能快取：Egarden 大角度植物漸變層 ---
@@ -509,14 +570,12 @@
     // --- 📱 行動裝置專屬動態搖桿事件處理 ---
     function handleInputStart(e) {
         if(gameState !== 'playing') return;
-        // 阻止瀏覽器預設下拉與回彈手勢
         if(e.cancelable) e.preventDefault();
         
         input.isDown = true;
         const clientX = e.touches ? e.touches[0].clientX : e.clientX;
         const clientY = e.touches ? e.touches[0].clientY : e.clientY;
         
-        // 在手指落下的位置生成搖桿
         input.startX = clientX;
         input.startY = clientY;
         input.curX = clientX;
@@ -539,7 +598,6 @@
         input.curX = clientX;
         input.curY = clientY;
 
-        // 計算拖曳向量與距離
         const dx = input.curX - input.startX;
         const dy = input.curY - input.startY;
         const distance = Math.hypot(dx, dy);
@@ -551,7 +609,6 @@
             return;
         }
 
-        // 限制搖桿圓鈕最大移動距離
         const angle = Math.atan2(dy, dx);
         const limitedDist = Math.min(distance, MAX_JOYSTICK_DIST);
         
@@ -560,7 +617,6 @@
         
         joystickKnobEl.style.transform = `translate(${knobX}px, ${knobY}px)`;
 
-        // 輸出歸一化（Normalize）方向向量
         input.vectorX = knobX / MAX_JOYSTICK_DIST;
         input.vectorY = knobY / MAX_JOYSTICK_DIST;
     }
@@ -575,12 +631,10 @@
         }, 150);
     }
 
-    // 重新綁定高靈敏度觸控與滑鼠事件
     canvas.addEventListener('mousedown', handleInputStart);
     canvas.addEventListener('mousemove', handleInputMove);
     window.addEventListener('mouseup', handleInputEnd);
     
-    // 加上 passive: false 確保 e.preventDefault() 起作用防止畫面滾動
     canvas.addEventListener('touchstart', handleInputStart, {passive: false});
     canvas.addEventListener('touchmove', handleInputMove, {passive: false});
     window.addEventListener('touchend', handleInputEnd);
@@ -605,7 +659,7 @@
     function triggerQuestion(index) {
         gameState = 'question';
         input.isDown = false;
-        joystickEl.style.display = 'none'; // 彈出題目時暫時隱藏搖桿
+        joystickEl.style.display = 'none';
         currentDinoIndex = index;
         const dino = dinos[index];
         
@@ -626,6 +680,8 @@
 
     function checkAnswer(selectedIndex) {
         const dino = dinos[currentDinoIndex];
+        
+        // 答對了！
         if(selectedIndex === dino.question.ans) {
             document.getElementById('questionScreen').classList.remove('active');
             dino.state = 'caught';
@@ -633,16 +689,36 @@
             
             if(player.caughtDinos < 12) {
                 document.getElementById('scoreDisplay').innerText = `🦖 ${player.caughtDinos} / 12`;
+                
+                // 成功捕捉 1 隻後，立刻再產出 1 個新的分散 🍀 草叢
+                spawnDino();
+                
                 gameState = 'playing';
             } else {
                 document.getElementById('scoreDisplay').innerText = `🦖 12 / 12 ✨`;
                 triggerCampHint();
             }
-        } else {
-            const title = document.querySelector('#questionScreen h2');
-            title.innerText = "請靜心再試一次";
-            title.style.color = "#8B5A2B";
-            setTimeout(() => { title.innerText = "發現野生恐龍"; title.style.color = "var(--egarden-green-dark)"; }, 1500);
+        } 
+        // 答錯了！該草叢立刻逃跑至新位置，玩家需要重新在森林裡尋找它
+        else {
+            document.getElementById('questionScreen').classList.remove('active');
+            
+            // 為該草叢重新計算一個新的、隨機分散的位置
+            const newPos = getRandomDispersedPosition();
+            dino.x = newPos.x;
+            dino.y = newPos.y;
+            
+            // 彈出提示，告知玩家它逃跑了
+            gameState = 'playing';
+            const scoreDisp = document.getElementById('scoreDisplay');
+            const originalText = scoreDisp.innerText;
+            scoreDisp.innerText = `💨 答錯了！草叢逃跑到別處了！`;
+            scoreDisp.classList.add('highlight');
+            
+            setTimeout(() => {
+                scoreDisp.innerText = originalText;
+                scoreDisp.classList.remove('highlight');
+            }, 2500);
         }
     }
 
@@ -684,7 +760,6 @@
 
         let isMoved = false;
 
-        // 📱 使用搖桿的方向向量控制角色移動，擺脫鍵盤依賴並優化流暢度
         if(input.isDown && (input.vectorX !== 0 || input.vectorY !== 0)) {
             const dx = input.vectorX * player.speed;
             const dy = input.vectorY * player.speed;
