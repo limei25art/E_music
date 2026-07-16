@@ -297,7 +297,7 @@
             <div class="emoji-art">⛺✨💫</div>
             <h2>觸發新任務！</h2>
             <span class="subtitle">PHASE 2: MEMORIES SHATTERED</span>
-            <p>糟了！恐龍們被森林的魔法傳送，重新隱藏於四處了！<br><br>請再次踏入森林尋找草叢。這一次，答對 MIRROR 成員的專屬謎題，身邊跟隨的 🦖 就會覺醒變身為該成員的<strong>專屬守護 Emoji</strong>！<br>全部變身成功後再帶領整隊人馬回大本營集合吧！</p>
+            <p>糟了！恐龍們被森林的魔法傳送，重新隱藏於四處了！<br><br>請再次踏入森林尋找 <strong>三葉草 ☘️</strong>。這一次，答對 MIRROR 成員的專屬謎題，身邊跟隨的 🦖 就能成功覺醒變身為該成員的<strong>專屬守護 Emoji</strong>！<br>全部變身成功後再帶領整隊人馬回大本營集合吧！</p>
             <button class="btn" onclick="startPhase2()">接受新任務</button>
         </div>
     </div>
@@ -340,7 +340,7 @@
     resize();
 
     const WORLD_SIZE = 1300;
-    let gameState = 'start'; // start, playing, question, camp_hint, phase2_start, phase2_playing, phase2_end_hint, end
+    let gameState = 'start'; 
     let currentPhase = 1; // 1: 捉恐龍, 2: 變身Emoji
     let startTime = 0;
     let timerInterval = null;
@@ -368,13 +368,16 @@
         speed: 8, size: 40, emoji: '🌼',
         history: [{x: CAMP_CENTER_X, y: CAMP_CENTER_Y}], 
         caughtDinos: 0,
-        transformedMembers: 0 // 階段二已變身的成員數量
+        transformedMembers: 0 
     };
 
     const camp = { x: CAMP_CENTER_X, y: CAMP_CENTER_Y, size: 70 };
+    
+    // 視覺特效數組 (煙霧與💖⭐✨愛心星星粒子)
     let visualEffects = [];
+    let particleSystems = [];
 
-    // 階段一問題：植物與基本謎題
+    // 階段一植物與基本謎題
     const phase1Questions = [
         { q: "姜濤的粉絲名稱是什麼？", options: ["姜糖", "神徒", "爵屎"], ans: 0 },
         { q: "Anson Lo (盧瀚霆) 的專屬應援色是什麼？", options: ["粉紅色", "藍色", "綠色"], ans: 0 },
@@ -390,7 +393,7 @@
         { q: "Jeremy (李駿傑) 的粉絲名稱是？", options: ["Unicorn", "柳柳粉", "蛋白粉"], ans: 0 }
     ];
 
-    // 階段二問題：與成員 Emoji 深度連結的全新 MIRROR 相關問答
+    // 階段二成員專屬謎題與 Emoji
     const phase2Questions = [
         { name: "Anson Lo", emoji: "👶🏼", q: "「教主」Anson Lo 的代表 Emoji 👶🏼 (神之娃) 取自哪首洗腦神曲的造型，或象徵其不老可愛感？", options: ["《Megahit》", "《Mr. Stranger》", "《Money》"], ans: 0 },
         { name: "Lokman", emoji: "🕺", q: "隊長 Lokman 以舞台舞技稱霸，他的代表 Emoji 🕺 象徵他在哪套街舞電影《狂舞派》中的角色？", options: ["柒良", "Dave", "阿龍"], ans: 1 },
@@ -400,7 +403,7 @@
         { name: "Edan", emoji: "🐤", q: "Edan 呂爵安的代表 Emoji 是黃色小雞 🐤。請問這與他搞笑親切的形象，以及粉絲稱呼他為什麼有關？", options: ["爵爺", "安安", "兒登 / 雀安"], ans: 2 },
         { name: "Anson Kong", emoji: "🦊", q: "AK 的代表 Emoji 是帥氣又帶點機靈的狐狸 🦊。請問他在 MIRROR 中除了副隊長職務外，還最常負責哪種擔當？", options: ["冷淡擔當", "熱血氣氛擔當", "搞笑裝傻擔當"], ans: 1 },
         { name: "Alton", emoji: "🦍", q: "Alton 的代表 Emoji 是大猩猩 🦍。這主要展現了他哪一項標誌性的身體特徵與性格魅力？", options: ["精湛的廚藝", "結實的肌肉與說唱爆發力", "超高的智商"], ans: 1 },
-        { name: "Frankie", emoji: "🍅", q: "Frankie 的代表 Emoji 是紅蕃茄 🍅。請問這個可愛的名字和形象，與 Frankie 哪一個著名的別稱直接相關？", options: ["皮皮", "粉紅番茄仔", "旦旦"], ans: 0 },
+        { name: "Frankie", emoji: "🍅", q: "Frankie 的代表 Emoji 是紅蕃茄 🍅。請問這個可愛的名字 and 形象，與 Frankie 哪一個著名的別稱直接相關？", options: ["皮皮", "粉紅番茄仔", "旦旦"], ans: 0 },
         { name: "Keung To", emoji: "🍬", q: "姜濤的代表 Emoji 是糖果 🍬。這與他的粉絲名稱「姜糖」高度契合，也象徵著哪首甜蜜熱門金曲的氛圍？", options: ["《蒙著嘴說愛你》", "《鏡中鏡》", "《作品的說話》"], ans: 0 },
         { name: "Jer", emoji: "🐠", q: "Jer 柳應廷的代表 Emoji 是熱帶魚 🐠。這與他音樂中如流水般空靈深邃的哪首歌、或代表系列最為相符？", options: ["《水刑物語》", "《人類群星閃耀時》", "《狂人日記》"], ans: 0 },
         { name: "Tiger", emoji: "🐯", q: "忙內 Tiger 的代表 Emoji 是小老虎 🐯。這除了代表他的名字以外，還代表著他哪項不為人知的導演才華？", options: ["他執導過MIRROR的MV與短片", "他拿過世界武術冠軍", "他擅長彈奏電結他"], ans: 0 }
@@ -437,7 +440,6 @@
         }
     }
 
-    // 準備兩階段的恐龍池子
     let shuffledDinosPool = [];
     function initPhase1Pool() {
         shuffledDinosPool = [];
@@ -448,8 +450,8 @@
     }
     initPhase1Pool();
 
-    const dinos = []; // 當前場地上的草叢 (最多6個)
-    const activeFollowers = []; // 隊伍中跟著玩家的物件，一開始是 '🦖'，答對第二階段會變成專屬 Emoji
+    const dinos = []; 
+    const activeFollowers = []; 
 
     function getRandomDispersedPosition() {
         let rx, ry, valid = false, attempts = 0;
@@ -491,7 +493,6 @@
         });
     }
 
-    // 初始化場地
     for(let i = 0; i < 6; i++) { spawnDino(); }
 
     const bgCanvas = document.createElement('canvas');
@@ -578,7 +579,6 @@
         document.getElementById('hud').style.display = 'flex';
         gameState = 'playing'; startTime = Date.now(); timerInterval = setInterval(updateTimer, 1000);
         
-        // 初始恐龍隊伍成員列表 (狀態都還是恐龍 🦖)
         for(let i = 0; i < 12; i++) {
             activeFollowers.push({ id: i, emoji: '🦖', transformed: false });
         }
@@ -602,7 +602,6 @@
         const optsDiv = document.getElementById('qOptions');
         optsDiv.innerHTML = '';
         
-        // 設定子標題與樣式
         const qTitle = document.getElementById('qTitle');
         const qSub = document.getElementById('qSub');
         if (currentPhase === 1) {
@@ -621,6 +620,26 @@
         });
         
         document.getElementById('questionScreen').classList.add('active');
+    }
+
+    // 💖⭐️✨ 粒子噴發特效生成函數
+    function createCelebrationParticles(x, y) {
+        const emojis = ['💖', '⭐', '✨'];
+        const count = 18; // 每次產生 18 個粒子
+        for (let i = 0; i < count; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const speed = Math.random() * 4 + 2; // 噴發速度
+            particleSystems.push({
+                x: x,
+                y: y,
+                vx: Math.cos(angle) * speed,
+                vy: Math.sin(angle) * speed - 1, // 額外向上飄
+                emoji: emojis[Math.floor(Math.random() * emojis.length)],
+                life: 1.0, // 初始生命值 (100%)
+                size: Math.random() * 10 + 16, // 隨機粒子大小
+                decay: Math.random() * 0.015 + 0.01 // 慢慢衰減消散
+            });
+        }
     }
 
     function checkAnswer(selectedIndex) {
@@ -646,16 +665,19 @@
                     triggerCampHint();
                 }
             } else {
-                // 階段二：答對變身 Emoji！
+                // 階段二：答對變身專屬 Emoji + 產生 💖⭐✨ 特效
                 player.transformedMembers++;
                 
-                // 尋找隊伍中對應此問題 ID 的恐龍，將其變身為專屬 Emoji 🌟
+                // 尋找隊伍中對應此 ID 的成員，將其轉變
                 const targetFollower = activeFollowers.find(f => f.id === dino.id);
                 if (targetFollower) {
                     targetFollower.emoji = dino.question.emoji;
                     targetFollower.transformed = true;
                 }
                 
+                // 在草叢解答的位置引爆 💖⭐️✨ 浪漫粒子特效！
+                createCelebrationParticles(dino.x, dino.y);
+
                 if(player.transformedMembers < 12) {
                     document.getElementById('scoreDisplay').innerText = `🌟 ${player.transformedMembers} / 12`;
                     spawnDino();
@@ -666,7 +688,7 @@
                 }
             }
         } else {
-            // --- 答錯 POPUP 震動與逃跑特效邏輯 ---
+            // --- 答錯 POPUP 震動與逃跑特效 ---
             optsDiv.style.display = 'none';
             qTitle.innerText = "答錯了！";
             qTitle.style.color = "var(--error-red)";
@@ -681,12 +703,11 @@
                 emoji: '💨', life: 1.0 
             });
             
-            // 草叢瞬間移動
+            // 草叢瞬間移動到隨機位置
             const newPos = getRandomDispersedPosition();
             dino.x = newPos.x;
             dino.y = newPos.y;
             
-            // 延遲關閉
             setTimeout(() => {
                 document.getElementById('questionScreen').classList.remove('active');
                 
@@ -723,21 +744,21 @@
         document.getElementById('phase2StartScreen').classList.add('active');
     }
 
-    // --- 階段二：開始新任務（尋回成員 Emoji 記憶） ---
+    // --- 階段二：🍀 變為 ☘️，開始新任務 ---
     window.startPhase2 = function() {
         document.getElementById('phase2StartScreen').classList.remove('active');
         currentPhase = 2;
         gameState = 'phase2_playing';
         
-        // 清空並重組第二階段的隨機草叢池子
-        dinos.length = 0; // 清除目前場上舊的草叢
+        // 清除目前場地，並全部變為三葉草 '☘️' 
+        dinos.length = 0; 
         shuffledDinosPool.length = 0;
         for(let i = 0; i < 12; i++) {
-            shuffledDinosPool.push({ id: i, question: phase2Questions[i], bushEmoji: '🍀', phase: 2 });
+            shuffledDinosPool.push({ id: i, question: phase2Questions[i], bushEmoji: '☘️', phase: 2 });
         }
         shuffledDinosPool.sort(() => Math.random() - 0.5);
 
-        // 在場上重新放置 6 個全新草叢
+        // 重新在草地上生成 6 個三葉草 '☘️' 起始點
         for(let i = 0; i < 6; i++) { spawnDino(); }
 
         const scoreDisp = document.getElementById('scoreDisplay');
@@ -781,7 +802,6 @@
 
         if (isMoved) {
             player.history.unshift({x: player.x, y: player.y});
-            // 隊長+隊員們總共 12 位
             const maxHistoryLength = 200;
             if(player.history.length > maxHistoryLength) player.history.pop();
         }
@@ -790,7 +810,6 @@
         camera.y += (player.y - camera.y) * 0.1;
 
         if (currentPhase === 1) {
-            // 階段一：收集恐龍 🦖
             if(player.caughtDinos < 12) {
                 dinos.forEach((dino, index) => {
                     if(dino.state === 'hidden') {
@@ -799,12 +818,10 @@
                     }
                 });
             } else {
-                // 收集齊後引導至大本營 ⛺
                 const distToCamp = Math.hypot(player.x - camp.x, player.y - camp.y);
                 if(distToCamp < 60) triggerPhase2Start();
             }
         } else {
-            // 階段二：成員變身 Emoji
             if(player.transformedMembers < 12) {
                 dinos.forEach((dino, index) => {
                     if(dino.state === 'hidden') {
@@ -813,15 +830,23 @@
                     }
                 });
             } else {
-                // 變身完後最終帶回大本營 ⛺
                 const distToCamp = Math.hypot(player.x - camp.x, player.y - camp.y);
                 if(distToCamp < 60) endGame();
             }
         }
         
-        // 更新視覺特效生命週期
+        // 更新煙霧特效生命值
         visualEffects.forEach(eff => eff.life -= 0.015);
         visualEffects = visualEffects.filter(eff => eff.life > 0);
+
+        // 更新 💖⭐✨ 慶祝粒子運動
+        particleSystems.forEach(p => {
+            p.x += p.vx;
+            p.y += p.vy;
+            p.vy += 0.02; // 輕微的重力效果
+            p.life -= p.decay;
+        });
+        particleSystems = particleSystems.filter(p => p.life > 0);
     }
 
     function draw() {
@@ -833,7 +858,7 @@
         ctx.drawImage(bgCanvas, 0, 0);
         ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
 
-        // 繪製草叢
+        // 繪製草叢 (第一階段為 🍀，第二階段為 ☘️)
         dinos.forEach((dino, index) => {
             if(dino.state === 'hidden') {
                 ctx.save();
@@ -856,15 +881,22 @@
             ctx.restore();
         });
 
+        // 繪製 💖⭐✨ 慶祝粒子特效
+        particleSystems.forEach(p => {
+            ctx.save();
+            ctx.globalAlpha = p.life;
+            ctx.font = `${p.size}px Arial`;
+            ctx.fillText(p.emoji, p.x, p.y);
+            ctx.restore();
+        });
+
         // 繪製跟隨身後的成員隊伍 (階段一為恐龍，階段二若答對會變身)
         let visibleFollowerCount = 0;
         activeFollowers.forEach((follower, index) => {
-            // 階段一：只顯示已被捕獲的恐龍數。階段二：全部12名隊員都一直尾隨隊長。
             const isVisible = (currentPhase === 1 && index < player.caughtDinos) || (currentPhase === 2);
             
             if(isVisible) {
                 visibleFollowerCount++;
-                // 每個尾隨成員維持固定的歷史節點軌跡間距
                 const pos = player.history[visibleFollowerCount * 11] || player.history[player.history.length-1];
                 if(pos) {
                     ctx.save();
