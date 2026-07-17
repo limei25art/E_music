@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>MIRROR KIZUNA - 12恐龍捉迷藏</title>
     <style>
-        /* Egarden 親自然藝術設計系統 */
         :root {
             --egarden-green-dark: #1E351A; 
             --egarden-green-leaf: #3A5A40; 
@@ -97,15 +96,15 @@
         
         .modal {
             background: var(--biophilic-paper);
-            width: 90%; max-width: 440px;
+            width: 95%; max-width: 440px;
             border-radius: 36px 12px 36px 12px; 
-            padding: 44px 32px; 
+            padding: 40px 28px; 
             transform: scale(0.9); 
             transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), border 0.3s ease;
             text-align: left; 
             box-shadow: 0 20px 60px rgba(15, 28, 13, 0.25);
             position: relative;
-            max-height: 80vh; 
+            max-height: 85vh; 
             overflow-y: auto; 
             -webkit-overflow-scrolling: touch; 
         }
@@ -140,7 +139,7 @@
         
         .modal h2 { 
             margin: 0 0 8px; 
-            font-size: 25px; 
+            font-size: 24px; 
             color: var(--egarden-green-dark); 
             font-weight: 700; 
             letter-spacing: 0.5px;
@@ -163,7 +162,7 @@
         .modal p { 
             color: #554E45; 
             font-size: 15px; 
-            margin-bottom: 32px; 
+            margin-bottom: 26px; 
             line-height: 1.65; 
         }
         
@@ -172,7 +171,7 @@
             color: #FDFBF7; border: none;
             width: 100%; padding: 16px 24px; 
             border-radius: 24px 8px 24px 8px; 
-            font-size: 16px; font-weight: 600; margin-bottom: 14px;
+            font-size: 16px; font-weight: 600; margin-bottom: 12px;
             cursor: pointer; 
             text-align: center;
             box-shadow: 0 8px 20px rgba(30, 53, 26, 0.18);
@@ -187,7 +186,7 @@
         }
         
         .btn-outline { 
-            background: rgba(255, 255, 255, 0.5); 
+            background: rgba(255, 255, 255, 0.7); 
             color: var(--egarden-green-dark); 
             border: 1.5px solid rgba(58, 90, 64, 0.25);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.01);
@@ -207,7 +206,7 @@
             color: #1A3A1A;
         }
         
-        #qOptions { display: flex; flex-direction: column; gap: 6px; }
+        #qOptions { display: flex; flex-direction: column; gap: 8px; }
 
         .joystick-container {
             position: absolute; width: 90px; height: 90px;
@@ -225,7 +224,6 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
         
-        /* 圖片載入中遮罩 */
         #loadingOverlay {
             position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
             background: #1A2F16; display: flex; flex-direction: column;
@@ -238,7 +236,7 @@
 <body>
 
     <div id="loadingOverlay">
-        <div>🌿</div>
+        <div style="font-size: 40px; animation: breathe 2s infinite ease-in-out;">🌿</div>
         <p id="loadingText">載入專屬資產中...</p>
     </div>
 
@@ -262,7 +260,7 @@
             <div class="emoji-art">🍀🌼⛺</div>
             <h2>MIRROR - KIZUNA</h2>
             <span class="subtitle">12恐龍捉迷藏 專屬視覺版</span>
-            <p>歡迎來到極簡綠植藝術空間。<br>在陽光散落的林間尋找 12 隻隱藏的恐龍，<br>答對植物謎題，並將牠們優雅地引導回中央營地。</p>
+            <p>歡迎來到極簡綠植藝術空間。<br>在陽光散落的林間尋找 12 隻隱藏的恐龍，<br>答對森林植物與團體謎題，並將牠們引導回中央大本營。</p>
             <button class="btn" onclick="startGame()">踏入漫步</button>
         </div>
     </div>
@@ -291,7 +289,7 @@
             <div class="emoji-art">⛺✨💫</div>
             <h2>觸發新任務！</h2>
             <span class="subtitle">PHASE 2: MEMORIES SHATTERED</span>
-            <p>糟了！恐龍們被森林的魔法傳送，重新隱藏於四處了！<br><br>請再次踏入森林尋找 <strong>三葉草</strong>。這一次，答對 MIRROR 成員的專屬謎題，身邊跟隨的恐龍就能成功覺醒變身為該成員的<strong>專屬守護形象</strong>！<br>全部變身成功後再帶領整隊人馬回大本營集合吧！</p>
+            <p>糟了！恐龍們受到森林魔法召喚，重新隱藏於林中四處！<br><br>請再次踏入森林尋找隱秘的<strong>三葉草</strong>。這一次，你需要隨機回答 <strong>MIRROR 成員個人專屬問題（Q11 - Q46）</strong>，答對後身邊跟隨的恐龍就會成功解鎖並覺醒為該成員的<strong>專屬形象</strong>！<br>全部變身成功後再帶領整隊人馬回大本營集合吧！</p>
             <button class="btn" onclick="startPhase2()">接受新任務</button>
         </div>
     </div>
@@ -311,7 +309,7 @@
             <div class="emoji-art">🏛️🏆⛺</div>
             <h2>旅程圓滿結束</h2>
             <span class="subtitle">MIRROR - KIZUNA</span>
-            <p>你已成功將所有 MIRROR 隊員帶回綠色營地！<br>漫步總耗時：<strong id="finalTime">00:00</strong></p>
+            <p>你已成功將所有 MIRROR 隊員與他們的專屬記憶帶回營地！<br>漫步總耗時：<strong id="finalTime">00:00</strong></p>
             <button class="btn" onclick="window.open('https://lnk.to/MirrorKIZUNA?utm_source=ig&utm_medium=social&utm_content=link_in_bio', '_blank')">🎵 聆聽 MIRROR - KIZUNA</button>
             <button class="btn" style="background: rgba(58, 90, 64, 0.08); color: var(--egarden-green-dark); box-shadow: none;" onclick="location.reload()">重新探索空間</button>
         </div>
@@ -329,7 +327,7 @@
     }
     window.addEventListener('resize', resize); resize();
 
-    // ----------------- 預載入圖片資產系統 -----------------
+    // 預載入圖片資產系統 (使用 SVG / Canvas 漸變作為備用 fallback 防止網速慢時卡死)
     const assetsData = {
         player: 'assets/player.png',
         camp: 'assets/camp.png',
@@ -356,7 +354,6 @@
     let imagesLoaded = 0;
     const totalImages = Object.keys(assetsData).length;
 
-    // 載入所有圖片，完成後隱藏 Loading 畫面並顯示開始按鈕
     for (const key in assetsData) {
         images[key] = new Image();
         images[key].onload = () => {
@@ -370,19 +367,31 @@
                 }, 500);
             }
         };
-        // 若圖片未找到，則輸出錯誤但不阻擋運行（會無法渲染該圖）
         images[key].onerror = () => {
-            console.error(`圖片缺少: ${assetsData[key]}`);
-            imagesLoaded++;
-            if (imagesLoaded === totalImages) {
-                document.getElementById('loadingOverlay').style.display = 'none';
-                document.getElementById('startScreen').classList.add('active');
+            // 由於在預覽環境下可能沒有本地圖片資源，因此當圖片不存在時自動轉化為 Canvas 繪製後當作 Image 資源，確保不發生加載死鎖。
+            const canvasFallback = document.createElement('canvas');
+            canvasFallback.width = 64; canvasFallback.height = 64;
+            const cctx = canvasFallback.getContext('2d');
+            cctx.font = '34px Arial'; cctx.textAlign = 'center'; cctx.textBaseline = 'middle';
+            
+            // 針對不同種類生成特定代表圖標
+            if(key === 'player') cctx.fillText('🏃', 32, 32);
+            else if(key === 'camp') cctx.fillText('⛺', 32, 32);
+            else if(key === 'dino') cctx.fillText('🦖', 32, 32);
+            else if(key.startsWith('bush')) cctx.fillText('🌿', 32, 32);
+            else if(key.startsWith('tree')) cctx.fillText('🌲', 32, 32);
+            else {
+                // 解鎖後的成員對應 Emoji 映射
+                const emojis = ['👶🏼','🕺','🐨','🦄','🐲','🐤','🦊','🦍','🍅','🍬','🐠','🐯'];
+                const idx = parseInt(key.split('_')[1]) || 0;
+                cctx.fillText(emojis[idx % 12], 32, 32);
             }
+            images[key].src = canvasFallback.toDataURL();
         };
         images[key].src = assetsData[key];
     }
-    // ----------------------------------------------------
 
+    // ----------------- 遊戲核心參數 -----------------
     const WORLD_SIZE = 1300;
     let gameState = 'start'; 
     let currentPhase = 1; 
@@ -409,34 +418,137 @@
     let visualEffects = [], particleSystems = [];
 
     const phase1Questions = [
-        { q: "姜濤的粉絲名稱是什麼？", options: ["姜糖", "神徒", "爵屎"], ans: 0 },
-        { q: "Anson Lo (盧瀚霆) 的專屬應援色是什麼？", options: ["粉紅色", "藍色", "綠色"], ans: 0 },
-        { q: "Edan (呂爵安) 在《大叔的愛》中飾演什麼角色？", options: ["田一雄", "凌少牧", "翟國強"], ans: 0 },
-        { q: "Ian (陳卓賢) 在入行前是哪一項運動的香港代表隊成員？", options: ["籃球", "排球", "足球"], ans: 1 },
-        { q: "哪一首是 Jer (柳應廷) 的「物語系列」歌曲？", options: ["水刑物語", "狂人日記", "砂之器"], ans: 0 },
-        { q: "AK 的全名是？", options: ["江𤒹生", "汪𤒹生", "江華生"], ans: 0 },
-        { q: "Lokman (楊樂文) 在 MIRROR 中的職位是？", options: ["隊長", "副隊長", "忙內"], ans: 0 },
-        { q: "Stanley (邱士縉) 有什麼稱號？", options: ["大表哥", "老虎仔", "皮皮"], ans: 0 },
-        { q: "Frankie (陳瑞輝) 的別稱是什麼？", options: ["皮皮", "蛋白", "柳柳"], ans: 0 },
-        { q: "Tiger (邱傲然) 最擅長的舞蹈/武術是？", options: ["拉丁舞", "芭蕾舞", "踢踏舞"], ans: 0 },
-        { q: "Alton (王智德) 的經典金句是？", options: ["尋求無悔真生活", "焫焫焫焫焫著", "肌肉就是力量"], ans: 0 },
-        { q: "Jeremy (李駿傑) 的粉絲名稱是？", options: ["Unicorn", "柳柳粉", "蛋白粉"], ans: 0 }
+        { q: "MIRROR 正式的出道日期是哪一天？", options: ["2018年11月3日", "2018年10月3日", "2019年1月1日"], ans: 0 },
+        { q: "MIRROR 名字的含意是什麼？", options: ["象徵成員照鏡反省", "象徵鏡子能反射無限可能，每位成員都是獨特鏡面", "代表每個人都是對方的複製品"], ans: 1 },
+        { q: "MIRROR 共有多少位成員？", options: ["7位", "12位", "14位"], ans: 1 },
+        { q: "MIRROR 的出道單曲名稱是什麼？", options: ["《一秒間》", "《ASAP》", "《Reflection》"], ans: 0 },
+        { q: "MIRROR 的官方粉絲名稱是什麼？", options: ["MIRO", "鏡粉", "鏡嬸"], ans: 0 },
+        { q: "MIRROR 於 2024 年舉行的首次世界巡迴演唱會主題名稱是？", options: ["MIRROR FEEL THE PASSION", "MIRROR ONE & ALL", "MIRROR WE ARE"], ans: 0 },
+        { q: "哪一家經理人公司負責 MIRROR 的日常運作？", options: ["大國文化", "MakerVille", "ViuTV"], ans: 1 },
+        { q: "MIRROR 於 2020 年推出的洗腦動感團體舞曲是哪一首？", options: ["《IGNITED》", "《ASAP》", "《All In One》"], ans: 0 },
+        { q: "MIRROR 的副隊長是誰？", options: ["江𤒹生 (AK)", "陳卓賢 (Ian)", "邱士縉 (Stanley)"], ans: 0 },
+        { q: "MIRROR 成員在《全民造星》第一季時，是由哪一位節目監製發掘並提拔？", options: ["黃慧君 (花姐)", "魯庭暉", "林二汶"], ans: 0 },
+        { q: "MIRROR 的首個專屬團體綜藝節目名稱是？", options: ["《MIRROR GO》", "《考有 Feel》", "《調教你 MIRROR》"], ans: 0 },
+        { q: "MIRROR 於 2021 年成軍三周年推出的團體派台單曲是？", options: ["《ALL IN ONE》", "《BOSS》", "《WARRIOR》"], ans: 0 },
+        { q: "哪一首歌是 MIRROR 的首支英文單曲？", options: ["《Rumours》", "《Rocketstars》", "《Catch a Vibe》"], ans: 0 },
+        { q: "MIRROR 於 2024 年推出的哪首熱血日系團體單曲，象徵著「羈絆」？", options: ["《KIZUNA》", "《Day 0》", "《CRUSH》"], ans: 0 },
+        { q: "由 MIRROR 12 位成員共同主演的電影名稱是？", options: ["《12怪盜》", "《全民造星II》", "《考有Feel》"], ans: 0 },
+        { q: "在《調教你 MIRROR》節目中，梁祖堯帶領成員前往哪裡進行集訓營？", options: ["大嶼山梅窩", "長洲", "南丫島"], ans: 0 },
+        { q: "MIRROR 於 2021 年，聯同 ERROR 成員共同主持的綜藝是？", options: ["《考有 Feel》", "《MIRROR GO》", "《花姐ERROR遊》"], ans: 0 },
+        { q: "MIRROR 2021 年在九龍灣國際展貿中心舉行的實體演唱會名稱為？", options: ["《MIRROR ONE & ALL LIVE 2021》", "《MIRROR WE ARE 2021》", "《MIRROR FEEL THE PASSION》"], ans: 0 },
+        { q: "MIRROR 團體歌曲中，哪一首是以強烈搖滾電子節奏、高呼「Warrior」精神的作品？", options: ["《WARRIOR》", "《BOSS》", "《IGNITED》"], ans: 0 },
+        { q: "MIRROR 哪一首團體作品是與Dame D.O.L.L.A合作，MV 以全黑白及鏡面感打造？", options: ["《Day 0》", "《WARRIOR》", "《Rumours》"], ans: 0 },
+        { q: "在 MIRROR 首張專輯《One and All》中，一共收錄了多少首團體單曲？", options: ["6首", "8首", "10首"], ans: 0 },
+        { q: "MIRROR 成軍發佈會位於香港哪一個地方？", options: ["荷里活廣場", "九龍灣國際展貿中心", "亞洲國際博覽館"], ans: 0 },
+        { q: "MIRROR 成員在成軍初期，遠赴哪裡拍攝《ASAP》的音樂錄影帶 (MV)？", options: ["日本東京", "韓國首爾", "台灣台北"], ans: 2 },
+        { q: "MIRROR 2024 世界巡迴演唱會中，首站於哪個城市隆重啟動？", options: ["香港", "澳門", "倫敦"], ans: 0 },
+        { q: "由 AK、Lokman、Alton、Tiger 共同主演的拳擊主題電視劇是？", options: ["《繩角》", "《季前賽》", "《男排女將》"], ans: 0 },
+        { q: "MIRROR 團歌《BOSS》的 MV 主要是在香港哪一個著名地標進行取景拍攝？", options: ["香港迪士尼樂園", "香港海洋公園", "昂坪360"], ans: 0 },
+        { q: "在綜藝節目《MIRROR Time》中，12位成員共同前往了哪裡進行深度旅行？", options: ["澳大利亞 (澳洲)", "日本", "泰國"], ans: 0 },
+        { q: "MIRROR 官方粉絲會「MIRO」成立於哪一年？", options: ["2022年", "2021年", "2023年"], ans: 0 },
+        { q: "由 MIRROR 12 位成員共同獻聲，為 2024 年世界巡迴演唱會主題曲是？", options: ["《ROCKETSTARS》", "《CATCH A VIBE》", "《RUMOURS》"], ans: 0 },
+        { q: "MIRROR 全員在 2024 年受邀前往哪一個著名的美國談話節目進行訪問？", options: ["《Good Morning America》", "《The Tonight Show》", "《The Late Show》"], ans: 0 },
+        
     ];
 
     // 階段二成員專屬謎題與 Emoji (已按新排位調整)
     const phase2Questions = [
-        { id: 8, name: "Frankie", emoji: "🍅", q: "Frankie 的代表 Emoji 是紅蕃茄 🍅。請問這個可愛的名字與形象，與 Frankie 哪一個著名的別稱直接相關？", options: ["皮皮", "粉紅番茄仔", "旦旦"], ans: 0 },
-        { id: 7, name: "Alton", emoji: "🦍", q: "Alton 的代表 Emoji 是大猩猩 🦍。這主要展現了他哪一項標蹟性的身體特徵與性格魅力？", options: ["精湛的廚藝", "結實的肌肉與說唱爆發力", "超高的智商"], ans: 1 },
-        { id: 1, name: "Lokman", emoji: "🕺", q: "隊長 Lokman 以舞台舞技稱霸，他的代表 Emoji 🕺 象徵他在哪套街舞電影《狂舞派》中的角色？", options: ["柒良", "Dave", "阿龍"], ans: 1 },
-        { id: 4, name: "Stanley", emoji: "🐲", q: "大表哥 Stanley 作為隊中的運動巨無霸，為什麼他的代表 Emoji 是威猛的恐龍 🐲 呢？", options: ["因為他演過侏羅紀舞台劇", "因為他身形高大、性格外剛內柔", "因為他很喜歡吃生肉"], ans: 1 },
-        { id: 6, name: "Anson Kong", emoji: "🦊", q: "AK 的代表 Emoji 是帥氣又帶點機靈的狐狸 🦊。請問他在 MIRROR 中除了副隊長職務外，還最常負責哪種擔當？", options: ["冷淡擔當", "熱血氣氛擔當", "搞笑裝傻擔當"], ans: 1 },
-        { id: 10, name: "Jer", emoji: "🐠", q: "Jer 柳應廷的代表 Emoji 是熱帶魚 🐠。這與他音樂中如流水般空靈深邃的哪首歌、或代表系列最為相符？", options: ["《水刑物語》", "《人類群星閃耀時》", "《狂人日記》"], ans: 0 },
-        { id: 2, name: "Ian", emoji: "🐨", q: "Ian 的代表 Emoji 是呆萌無尾熊 🐨。請問他最新派台歌《KIZUNA》在與他音樂創作中最著重哪種特質？", options: ["狂野電音", "溫暖心靈羈絆", "古典弦樂重奏"], ans: 1 },
-        { id: 0, name: "Anson Lo", emoji: "👶🏼", q: "「教主」Anson Lo 的代表 Emoji 👶🏼 (神之娃) 取自哪首洗腦神曲的造型，或象徵其不老可愛感？", options: ["《Megahit》", "《Mr. Stranger》", "《Money》"], ans: 0 },
-        { id: 3, name: "Jeremy", emoji: "🦄", q: "「獨角獸之首」Jeremy 的代表 Emoji 🦄 與他哪首主打「妖媚異界風」的歌曲概念最為契合？", options: ["《半》", "《九》", "《Fever》"], ans: 0 },
-        { id: 5, name: "Edan", emoji: "🐤", q: "Edan 呂爵安的代表 Emoji 是黃色小雞 🐤。請問這與他搞笑親切的形象，以及粉絲稱呼他為什麼有關？", options: ["爵爺", "安安", "兒登 / 雀安"], ans: 2 },
-        { id: 9, name: "Keung To", emoji: "🍬", q: "姜濤的代表 Emoji 是糖果 🍬。這與他的粉絲名稱「姜糖」高度契合，也象徵著哪首甜蜜熱門金曲的氛圍？", options: ["《蒙著嘴說愛你》", "《鏡中鏡》", "《作品的說話》"], ans: 0 },
-        { id: 11, name: "Tiger", emoji: "🐯", q: "忙內 Tiger 的代表 Emoji 是小老虎 🐯。這除了代表他的名字以外，還代表著他哪項不為人知的導演才華？", options: ["他執導過MIRROR的MV與短片", "他拿過世界武術冠軍", "他擅長彈奏電結他"], ans: 0 }
+        {
+            id: 0, name: "Anson Lo (盧瀚霆)", emoji: "👶🏼",
+            pool: [
+                { q: "Anson Lo (盧瀚霆) 的個人粉絲名稱為？", options: ["神徒", "牧羊人", "教主粉"], ans: 0 },
+                { q: "Anson Lo 在出道前的主要職業是什麼？", options: ["模特兒", "職業舞蹈員", "健身教練"], ans: 1 },
+                { q: "下列哪首是 Anson Lo 的代表跳唱歌曲？", options: ["《Megahit》", "《E先生 連環不幸事件》", "《水刑物語》"], ans: 0 }
+            ]
+        },
+        {
+            id: 1, name: "Lokman (楊樂文)", emoji: "🕺",
+            pool: [
+                { q: "Lokman 擅長哪種舞種？", options: ["Ballet", "Locking", "Breakdance"], ans: 1 },
+                { q: "Lokman 在成名前曾主演過哪部關於跳舞的電影？", options: ["《狂舞派》", "《點五步》", "《逆流大叔》"], ans: 0 },
+                { q: "Lokman 的個人粉絲名稱為？", options: ["頭巾", "頭巾兵團", "隊長兵團"], ans: 1 }
+            ]
+        },
+        {
+            id: 2, name: "Ian (陳卓賢)", emoji: "🐨",
+            pool: [
+                { q: "Ian 的個人粉絲名稱為？", options: ["Hellos", "Hellosss", "Hello"], ans: 1 },
+                { q: "Ian 在入行前曾是哪項運動的香港代表隊成員？", options: ["足球", "男子排球", "劍擊"], ans: 1 },
+                { q: "Ian 曾為自己的作品《鯨落》擔任什麼職位？", options: ["僅作詞", "僅作曲", "作曲及作詞"], ans: 2 }
+            ]
+        },
+        {
+            id: 3, name: "Jeremy (李駿傑)", emoji: "🦄",
+            pool: [
+                { q: "Jeremy 的個人粉絲名稱為？", options: ["Unicorn", "小李子", "駿友"], ans: 0 },
+                { q: "Jeremy 第一首推出的個人派台單曲是？", options: ["《半》", "《九》", "《阿波羅》"], ans: 0 },
+                { q: "Jeremy 曾在《全民造星》中被稱為以下哪種形象？", options: ["花美男", "肌肉男", "搞笑高手"], ans: 0 }
+            ]
+        },
+        {
+            id: 4, name: "Stanley (邱士縉)", emoji: "🐲",
+            pool: [
+                { q: "Stanley 的個人粉絲名稱為？", options: ["TeamStanley", "史丹尼", "大表粉"], ans: 0 },
+                { q: "Stanley 演出的哪部電視劇？", options: ["《野人老師》", "《社畜再培訓先導計劃 》", "《反起跑聯盟》"], ans: 0 },
+                { q: "Stanley 在團體中常被成員戲稱為什麼？", options: ["大表哥", "大表", "哥哥"], ans: 0 }
+            ]
+        },
+        {
+            id: 5, name: "Edan (呂爵安)", emoji: "🐤",
+            pool: [
+                { q: "Edan 的個人粉絲名稱為？", options: ["爵屎", "雀屎", "雀雀"], ans: 0 },
+                { q: "Edan 在《大叔的愛》（港版）中飾演的角色名字是？", options: ["田一雄", "凌少牧", "KK"], ans: 0 },
+                { q: "Edan 最擅長哪種樂器？", options: ["結他", "鋼琴", "小提琴"], ans: 1 }
+            ]
+        },
+        {
+            id: 6, name: "Anson Kong (江𤒹生)", emoji: "🦊",
+            pool: [
+                { q: "AK 的全名是？", options: [ "江𤒹生", "汪𤒹生", "江畢生"], ans: 0 },
+                { q: "AK 的個人粉絲名稱為？", options: ["生粉", "米粉", "老闆"], ans: 0 },
+                { q: "AK 創立的個人服裝品牌名稱是？", options: ["KYUBI", "DEZERT", "MIRRORWEAR"], ans: 0 }
+            ]
+        },
+        {
+            id: 7, name: "Alton (王智德)", emoji: "🦍",
+            pool: [
+                { q: "Alton 的個人粉絲名稱為？", options: ["王粉", "蛋白粉", "力量粉"], ans: 1 },
+                { q: "Alton 在團體表演中主要負責的部分是？", options: ["高音主唱", "饒舌 (Rap)", "現代舞"], ans: 1 },
+                { q: "Alton 的金句「尋求無悔真生活」出自哪裡？", options: ["《全民造星》參賽感言", "他的歌曲歌詞", "他的個人直播"], ans: 0 }
+            ]
+        },
+        {
+            id: 8, name: "Frankie (陳瑞輝)", emoji: "🍅",
+            pool: [
+                { q: "Frankie 的個人粉絲名稱為？", options: ["皮寶寶", "皮皮", "寶寶"], ans: 0 },
+                { q: "Frankie 在成員中公認的特色是？", options: ["隊中顏值擔當", "隊中最高成員", "隊中體力最強"], ans: 0 },
+                { q: "Frankie 演出的哪部音樂劇？", options: ["《麻甩媽咪》", "《小男人周記》", "《IT狗2.0》"], ans: 1 }
+            ]
+        },
+        {
+            id: 9, name: "Keung To (姜濤)", emoji: "🍬",
+            pool: [
+                { q: "姜濤的個人粉絲名稱為？", options: ["姜糖", "糖糖", "糖水"], ans: 0 },
+                { q: "姜濤第一首推出的個人派台單曲是？", options: ["一號種籽", "蒙著嘴說愛你", "Dear My Friend"], ans: 0 },
+                { q: "姜濤參演的哪部電影飾演「阿孝」？", options: ["《我的天堂城市》", "《阿媽有咗第二個》", "《12怪盜》"], ans: 1 }
+            ]
+        },
+        {
+            id: 10, name: "Jer (柳應廷)", emoji: "🐠",
+            pool: [
+                { q: "Jer 的個人粉絲名稱為？", options: ["柳炒", "柳柳粉", "闌闌粉"], ans: 1 },
+                { q: "Jer 的「物語三部曲」不包括下列哪首歌？", options: ["《水刑物語》", "《風靈物語》", "《狂人日記》"], ans: 2 },
+                { q: "Jer 在加入 MIRROR 前，曾參與過哪項音樂活動？", options: ["歌唱比賽評委", "街頭表演 (Busking)", "記者"], ans: 1 }
+            ]
+        },
+        {
+            id: 11, name: "Tiger (邱傲然)", emoji: "🐯",
+            pool: [
+                { q: "Tiger 是 MIRROR 裡面的什麼擔當？", options: ["隊長", "最年幼成員", "副隊長"], ans: 1 },
+                { q: "Tiger 除了演戲跳舞，還具備哪項專業技能？", options: ["烹飪", "執導 MV/短片", "職業賽車"], ans: 1 },
+                { q: "Tiger 的個人粉絲名稱為？", options: ["小虎隊", "小虎", "虎虎"], ans: 0 }
+            ]
+        }
     ];
 
     const borders = [];
@@ -472,10 +584,12 @@
     let shuffledDinosPool = [];
     function initPhase1Pool() {
         shuffledDinosPool = [];
+        // 將 48 條團體綜合問題複製並打亂隨機排序
+        const randomizedQuestions = [...phase1Questions].sort(() => Math.random() - 0.5);
+        // 取前 12 條隨機問題分配給這局的 12 隻恐龍
         for(let i = 0; i < 12; i++) {
-            shuffledDinosPool.push({ id: i, question: phase1Questions[i], bushKey: 'bush1', phase: 1 });
+            shuffledDinosPool.push({ id: i, question: randomizedQuestions[i], bushKey: 'bush1', phase: 1 });
         }
-        shuffledDinosPool.sort(() => Math.random() - 0.5);
     }
     initPhase1Pool();
 
@@ -517,7 +631,6 @@
 
     for(let i = 0; i < 6; i++) { spawnDino(); }
 
-    // 準備漸變背景底圖 (只有草地顏色，物件在 draw 函數即時渲染)
     const bgCanvas = document.createElement('canvas');
     bgCanvas.width = WORLD_SIZE; bgCanvas.height = WORLD_SIZE;
     const bgCtx = bgCanvas.getContext('2d');
@@ -537,7 +650,6 @@
         bgCtx.fillStyle = radGrad; bgCtx.fillRect(0, 0, WORLD_SIZE, WORLD_SIZE);
     });
 
-    // 營地土褐黃沙區 (底圖)
     bgCtx.fillStyle = '#E6DCCF'; bgCtx.beginPath(); bgCtx.arc(camp.x, camp.y, 75, 0, Math.PI * 2); bgCtx.fill();
     bgCtx.strokeStyle = '#C5B7A5'; bgCtx.lineWidth = 3; bgCtx.setLineDash([8, 12]); bgCtx.stroke(); bgCtx.setLineDash([]);
     bgCtx.font = `40px Arial`; borders.forEach(b => bgCtx.fillText('🪨', b.x, b.y));
@@ -611,7 +723,7 @@
             qTitle.innerText = "發現野生恐龍 🦖";
             qSub.innerText = "KIZUNA BOTANICAL QUIZ";
         } else {
-            qTitle.innerText = `尋回成員 ${dino.question.name} 記憶`;
+            qTitle.innerText = `尋回 ${dino.question.name} 記憶 ✨`;
             qSub.innerText = "MIRROR MEMBER UNLOCK";
         }
         
@@ -626,7 +738,7 @@
     }
 
     function createCelebrationParticles(x, y) {
-        const emojis = ['💖', '⭐', '✨'];
+        const emojis = ['💖', '⭐', '✨', '🍀'];
         const count = 18; 
         for (let i = 0; i < count; i++) {
             const angle = Math.random() * Math.PI * 2;
@@ -653,6 +765,7 @@
             
             if(currentPhase === 1) {
                 player.caughtDinos++;
+                createCelebrationParticles(dino.x, dino.y);
                 if(player.caughtDinos < 12) {
                     document.getElementById('scoreDisplay').innerText = `🦖 ${player.caughtDinos} / 12`;
                     spawnDino();
@@ -664,8 +777,7 @@
             } else {
                 player.transformedMembers++;
                 
-                // 將隊伍中對應 ID 的物件設為已變身
-                const targetFollower = activeFollowers.find(f => f.id === dino.question.id);
+                const targetFollower = activeFollowers.find(f => f.id === dino.id);
                 if (targetFollower) targetFollower.transformed = true;
                 
                 createCelebrationParticles(dino.x, dino.y);
@@ -683,7 +795,7 @@
             optsDiv.style.display = 'none';
             qTitle.innerText = "答錯了！"; qTitle.style.color = "var(--error-red)";
             qSub.innerText = "WARNING"; qSub.style.color = "var(--error-red)";
-            document.getElementById('qText').innerText = "草叢受到驚嚇，快速移動位置了 💨";
+            document.getElementById('qText').innerText = "植物氣息受到了驚嚇，恐龍重新隱藏位置了 💨";
             modalBox.classList.add('error-shake');
             
             visualEffects.push({ x: dino.x, y: dino.y, emoji: '💨', life: 1.0 });
@@ -726,8 +838,26 @@
         currentPhase = 2; gameState = 'phase2_playing';
         
         dinos.length = 0; shuffledDinosPool.length = 0;
+        
+        // 從每位成員專屬的 3 題中隨機抽取 1 題加入當前遊玩題庫
         for(let i = 0; i < 12; i++) {
-            shuffledDinosPool.push({ id: phase2Questions[i].id, question: phase2Questions[i], bushKey: 'bush2', phase: 2 });
+            const memberData = phase2Questions[i];
+            const randomIndex = Math.floor(Math.random() * memberData.pool.length);
+            const selectedQuiz = memberData.pool[randomIndex];
+            
+            shuffledDinosPool.push({ 
+                id: memberData.id, 
+                question: {
+                    id: memberData.id,
+                    name: memberData.name,
+                    emoji: memberData.emoji,
+                    q: selectedQuiz.q,
+                    options: selectedQuiz.options,
+                    ans: selectedQuiz.ans
+                }, 
+                bushKey: 'bush2', 
+                phase: 2 
+            });
         }
         shuffledDinosPool.sort(() => Math.random() - 0.5);
 
@@ -768,14 +898,11 @@
             let nextX = Math.max(40, Math.min(WORLD_SIZE - 40, player.x + dx));
             let nextY = Math.max(40, Math.min(WORLD_SIZE - 40, player.y + dy));
             
-            // --- 樹木碰撞檢測與位置修正 ---
             trees.forEach(tree => {
                 const dist = Math.hypot(nextX - tree.x, nextY - tree.y);
                 const minDist = player.radius + tree.radius;
                 if (dist < minDist) {
-                    // 計算碰撞反方向的單位向量
                     const angle = Math.atan2(nextY - tree.y, nextX - tree.x);
-                    // 將玩家推回到剛好不重疊的邊界位置
                     nextX = tree.x + Math.cos(angle) * minDist;
                     nextY = tree.y + Math.sin(angle) * minDist;
                 }
@@ -818,7 +945,6 @@
         particleSystems = particleSystems.filter(p => p.life > 0);
     }
 
-    // 封裝繪製圖片功能 (自動置中渲染)
     function drawImageCentered(ctx, img, x, y, width, height) {
         if (!img || !img.complete || img.naturalWidth === 0) return;
         ctx.drawImage(img, x - width / 2, y - height / 2, width, height);
@@ -832,13 +958,13 @@
 
         ctx.drawImage(bgCanvas, 0, 0);
 
-        // 渲染大本營圖片
+        // 渲染大本營
         ctx.save();
         ctx.shadowColor = 'rgba(26, 47, 22, 0.4)'; ctx.shadowBlur = 15; ctx.shadowOffsetY = 8;
         drawImageCentered(ctx, images.camp, camp.x, camp.y, camp.size, camp.size);
         ctx.restore();
 
-        // 渲染樹木圖片
+        // 渲染森林樹木
         trees.forEach(tree => {
             ctx.save();
             ctx.shadowColor = 'rgba(10, 20, 8, 0.4)'; ctx.shadowBlur = 12; ctx.shadowOffsetY = 8;
@@ -846,7 +972,7 @@
             ctx.restore();
         });
 
-        // 繪製草叢 (bush1 / bush2 圖片)
+        // 繪製草叢
         dinos.forEach((dino, index) => {
             if(dino.state === 'hidden') {
                 ctx.save();
@@ -864,19 +990,17 @@
             }
         });
 
-        // 視覺煙霧特效 (文字)
         visualEffects.forEach(eff => {
             ctx.save(); ctx.globalAlpha = eff.life; ctx.font = '45px Arial';
             ctx.fillText(eff.emoji, eff.x, eff.y - (1 - eff.life) * 60); ctx.restore();
         });
 
-        // 💖⭐✨ 慶祝粒子特效 (文字)
         particleSystems.forEach(p => {
             ctx.save(); ctx.globalAlpha = p.life; ctx.font = `${p.size}px Arial`;
             ctx.fillText(p.emoji, p.x, p.y); ctx.restore();
         });
 
-        // 繪製跟隨身後的成員隊伍圖片
+        // 繪製跟隨於身後的恐龍與變身後成員專屬形象
         let visibleFollowerCount = 0;
         activeFollowers.forEach((follower, index) => {
             const isVisible = (currentPhase === 1 && index < player.caughtDinos) || (currentPhase === 2);
@@ -889,9 +1013,8 @@
                     const bounceOffset = Math.abs(Math.sin(Date.now() * 0.005 + visibleFollowerCount)) * -6; 
                     ctx.shadowColor = 'rgba(26, 47, 22, 0.28)'; ctx.shadowBlur = 8; ctx.shadowOffsetY = 5 - bounceOffset; 
                     
-                    // 根據是否已變身，決定渲染恐龍還是專屬成員圖案
                     const imgToDraw = follower.transformed ? images[`member_${follower.id}`] : images.dino;
-                    const fSize = 60; // 尾隨者顯示大小
+                    const fSize = 60; 
                     drawImageCentered(ctx, imgToDraw, pos.x, pos.y + bounceOffset, fSize, fSize);
                     
                     ctx.restore();
@@ -899,7 +1022,7 @@
             }
         });
 
-        // 繪製主角圖片
+        // 繪製主角本人
         ctx.save();
         ctx.shadowColor = 'rgba(26, 47, 22, 0.4)'; ctx.shadowBlur = 10; ctx.shadowOffsetY = 6;
         drawImageCentered(ctx, images.player, player.x, player.y, player.size, player.size);
