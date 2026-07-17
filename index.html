@@ -289,7 +289,7 @@
             <div class="emoji-art">⛺✨💫</div>
             <h2>觸發新任務！</h2>
             <span class="subtitle">PHASE 2: MEMORIES SHATTERED</span>
-            <p>糟了！恐龍們受到森林魔法召喚，重新隱藏於林中四處！<br><br>請再次踏入森林尋找隱秘的<strong>三葉草</strong>。這一次，你需要隨機回答 <strong>MIRROR 成員個人專屬問題（Q11 - Q46）</strong>，答對後身邊跟隨的恐龍就會成功解鎖並覺醒為該成員的<strong>專屬形象</strong>！<br>全部變身成功後再帶領整隊人馬回大本營集合吧！</p>
+            <p>糟了！恐龍們受到森林魔法召喚，重新隱藏於林中四處！<br><br>請再次踏入森林尋找隱秘的<strong>三葉草</strong>。這一次，你需要隨機回答 <strong>MIRROR 成員個人專屬問題</strong>，答對後身邊跟隨的恐龍就會成功解鎖並覺醒為該成員的<strong>專屬形象</strong>！<br>全部變身成功後再帶領整隊人馬回大本營集合吧！</p>
             <button class="btn" onclick="startPhase2()">接受新任務</button>
         </div>
     </div>
@@ -368,20 +368,17 @@
             }
         };
         images[key].onerror = () => {
-            // 由於在預覽環境下可能沒有本地圖片資源，因此當圖片不存在時自動轉化為 Canvas 繪製後當作 Image 資源，確保不發生加載死鎖。
             const canvasFallback = document.createElement('canvas');
             canvasFallback.width = 64; canvasFallback.height = 64;
             const cctx = canvasFallback.getContext('2d');
             cctx.font = '34px Arial'; cctx.textAlign = 'center'; cctx.textBaseline = 'middle';
             
-            // 針對不同種類生成特定代表圖標
             if(key === 'player') cctx.fillText('🏃', 32, 32);
             else if(key === 'camp') cctx.fillText('⛺', 32, 32);
             else if(key === 'dino') cctx.fillText('🦖', 32, 32);
             else if(key.startsWith('bush')) cctx.fillText('🌿', 32, 32);
             else if(key.startsWith('tree')) cctx.fillText('🌲', 32, 32);
             else {
-                // 解鎖後的成員對應 Emoji 映射
                 const emojis = ['👶🏼','🕺','🐨','🦄','🐲','🐤','🦊','🦍','🍅','🍬','🐠','🐯'];
                 const idx = parseInt(key.split('_')[1]) || 0;
                 cctx.fillText(emojis[idx % 12], 32, 32);
@@ -409,61 +406,59 @@
     const player = {
         x: CAMP_CENTER_X, y: CAMP_CENTER_Y,
         speed: 8, size: 50, 
-        radius: 18, // 玩家碰撞半徑
+        radius: 18, 
         history: [{x: CAMP_CENTER_X, y: CAMP_CENTER_Y}], 
         caughtDinos: 0, transformedMembers: 0 
     };
 
-    const camp = { x: CAMP_CENTER_X, y: CAMP_CENTER_Y, size: 120 }; // 營地繪製大小
+    const camp = { x: CAMP_CENTER_X, y: CAMP_CENTER_Y, size: 120 }; 
     let visualEffects = [], particleSystems = [];
 
     const phase1Questions = [
         { q: "MIRROR 正式的出道日期是哪一天？", options: ["2018年11月3日", "2018年10月3日", "2019年1月1日"], ans: 0 },
-        { q: "MIRROR 名字的含意是什麼？", options: ["象徵成員照鏡反省", "象徵鏡子能反射無限可能，每位成員都是獨特鏡面", "代表每個人都是對方的複製品"], ans: 1 },
+        { q: "MIRROR 名字的含意是什麼？", options: ["面對自己真實一面", "象徵鏡子能反射無限可能，每位成員都是獨特鏡面", "代表每位成員不同面向"], ans: 1 },
         { q: "MIRROR 共有多少位成員？", options: ["7位", "12位", "14位"], ans: 1 },
         { q: "MIRROR 的出道單曲名稱是什麼？", options: ["《一秒間》", "《ASAP》", "《Reflection》"], ans: 0 },
         { q: "MIRROR 的官方粉絲名稱是什麼？", options: ["MIRO", "鏡粉", "鏡嬸"], ans: 0 },
-        { q: "MIRROR 於 2024 年舉行的首次世界巡迴演唱會主題名稱是？", options: ["MIRROR FEEL THE PASSION", "MIRROR ONE & ALL", "MIRROR WE ARE"], ans: 0 },
+        { q: "MIRROR 於 24 年舉行的世界巡演主題名稱是？", options: ["MIRROR FEEL THE PASSION", "MIRROR ONE & ALL", "MIRROR WE ARE"], ans: 0 },
         { q: "哪一家經理人公司負責 MIRROR 的日常運作？", options: ["大國文化", "MakerVille", "ViuTV"], ans: 1 },
-        { q: "MIRROR 於 2020 年推出的洗腦動感團體舞曲是哪一首？", options: ["《IGNITED》", "《ASAP》", "《All In One》"], ans: 0 },
-        { q: "MIRROR 的副隊長是誰？", options: ["江𤒹生 (AK)", "陳卓賢 (Ian)", "邱士縉 (Stanley)"], ans: 0 },
-        { q: "MIRROR 成員在《全民造星》第一季時，是由哪一位節目監製發掘並提拔？", options: ["黃慧君 (花姐)", "魯庭暉", "林二汶"], ans: 0 },
+        { q: "MIRROR 於 20 年推出的洗腦動感團體舞曲是？", options: ["《IGNITED》", "《ASAP》", "《All In One》"], ans: 0 },
+        { q: "MIRROR 的副隊長是誰？", options: ["江𤒹生", "陳卓賢", "邱士縉"], ans: 0 },
+        { q: "《全民造星》第一季時由哪位節目監製發掘提拔？", options: ["黃慧君 (花姐)", "魯庭暉", "林二汶"], ans: 0 },
         { q: "MIRROR 的首個專屬團體綜藝節目名稱是？", options: ["《MIRROR GO》", "《考有 Feel》", "《調教你 MIRROR》"], ans: 0 },
-        { q: "MIRROR 於 2021 年成軍三周年推出的團體派台單曲是？", options: ["《ALL IN ONE》", "《BOSS》", "《WARRIOR》"], ans: 0 },
+        { q: "MIRROR 於 21 年成軍三周年的派台單曲是？", options: ["《ALL IN ONE》", "《BOSS》", "《WARRIOR》"], ans: 0 },
         { q: "哪一首歌是 MIRROR 的首支英文單曲？", options: ["《Rumours》", "《Rocketstars》", "《Catch a Vibe》"], ans: 0 },
-        { q: "MIRROR 於 2024 年推出的哪首熱血日系團體單曲，象徵著「羈絆」？", options: ["《KIZUNA》", "《Day 0》", "《CRUSH》"], ans: 0 },
+        { q: "MIRROR 2024 熱血日系、象徵「羈絆」的團體單曲？", options: ["《KIZUNA》", "《Day 0》", "《CRUSH》"], ans: 0 },
         { q: "由 MIRROR 12 位成員共同主演的電影名稱是？", options: ["《12怪盜》", "《全民造星II》", "《考有Feel》"], ans: 0 },
-        { q: "在《調教你 MIRROR》節目中，梁祖堯帶領成員前往哪裡進行集訓營？", options: ["大嶼山梅窩", "長洲", "南丫島"], ans: 0 },
-        { q: "MIRROR 於 2021 年，聯同 ERROR 成員共同主持的綜藝是？", options: ["《考有 Feel》", "《MIRROR GO》", "《花姐ERROR遊》"], ans: 0 },
-        { q: "MIRROR 2021 年在九龍灣國際展駁中心舉行的實體演唱會名稱為？", options: ["《MIRROR ONE & ALL LIVE 2021》", "《MIRROR WE ARE 2021》", "《MIRROR FEEL THE PASSION》"], ans: 0 },
-        { q: "MIRROR 團體歌曲中，哪一首是以強烈搖滾電子節奏、高呼「Warrior」精神的作品？", options: ["《WARRIOR》", "《BOSS》", "《IGNITED》"], ans: 0 },
-        { q: "MIRROR 哪一首團體作品是與Dame D.O.L.L.A合作，MV 以全黑白及鏡面感打造？", options: ["《Day 0》", "《WARRIOR》", "《Rumours》"], ans: 0 },
-        { q: "在 MIRROR 首張專輯《One and All》中，一共收錄了多少首團體單曲？", options: ["6首", "8首", "10首"], ans: 0 },
-        { q: "MIRROR 成軍發佈會位於香港哪一個地方？", options: ["荷里活廣場", "九龍灣國際展貿中心", "亞洲國際博覽館"], ans: 0 },
-        { q: "MIRROR 成員在成軍初期，遠赴哪裡拍攝《ASAP》的音樂錄影帶 (MV)？", options: ["日本東京", "韓國首爾", "台灣台北"], ans: 2 },
-        { q: "MIRROR 2024 世界巡迴演唱會中，首站於哪個城市隆重啟動？", options: ["香港", "澳門", "倫敦"], ans: 0 },
-        { q: "由 AK、Lokman、Alton、Tiger 共同主演的拳擊主題電視劇是？", options: ["《繩角》", "《季前賽》", "《男排女將》"], ans: 0 },
-        { q: "MIRROR 團歌《BOSS》的 MV 主要是在香港哪一個著名地標進行取景拍攝？", options: ["香港迪士尼樂園", "香港海洋公園", "昂坪360"], ans: 0 },
-        { q: "在綜藝節目《MIRROR Time》中，12位成員共同前往了哪裡進行深度旅行？", options: ["澳大利亞 (澳洲)", "日本", "泰國"], ans: 0 },
+        { q: "《調教你 MIRROR》中，梁祖堯帶領成員前往哪裡集訓？", options: ["大嶼山梅窩", "長洲", "南丫島"], ans: 0 },
+        { q: "2021 年，聯同 ERROR 成員共同主持的綜藝是？", options: ["《考有 Feel》", "《MIRROR GO》", "《花姐ERROR遊》"], ans: 0 },
+        { q: "2021 九展舉行首場大型實體演唱會名稱為？", options: ["《MIRROR ONE & ALL LIVE 2021》", "《MIRROR WE ARE 2021》", "《MIRROR FEEL THE PASSION》"], ans: 0 },
+        { q: "團體歌曲中以強烈電子節奏呼喊「Warrior」作品？", options: ["《WARRIOR》", "《BOSS》", "《IGNITED》"], ans: 0 },
+        { q: "與 Dame D.O.L.L.A 合作、以黑白與鏡面打造的MV是？", options: ["《Day 0》", "《WARRIOR》", "《Rumours》"], ans: 0 },
+        { q: "首張專輯《One and All》中收錄了多少首團歌？", options: ["6首", "8首", "10首"], ans: 0 },
+        { q: "MIRROR 成軍發佈會位於香港哪一個地方？", options: ["荷里活廣場", "九龍灣國際展貿中心", "亞洲國際博覽館"], ans: 1 },
+        { q: "成員在成軍初期遠赴哪裡拍攝《ASAP》的MV？", options: ["日本東京", "韓國首爾", "台灣台北"], ans: 2 },
+        { q: "2024世界巡迴演唱會中首站於哪個城市隆重啟動？", options: ["香港", "澳門", "邏敦"], ans: 0 },
+        { q: "由 AK, Lokman, Alton, Tiger 共同主演的電視劇？", options: ["《繩角》", "《季前賽》", "《男排女將》"], ans: 0 },
+        { q: "團歌《BOSS》的 MV 主要在哪個著名地標取景拍攝？", options: ["香港迪士尼樂園", "香港海洋公園", "昂坪360"], ans: 0 },
+        { q: "綜藝節目《MIRROR Time》中，全員共同前往哪裡深度旅行？", options: ["澳洲", "日本", "泰國"], ans: 0 },
         { q: "MIRROR 官方粉絲會「MIRO」成立於哪一年？", options: ["2022年", "2021年", "2023年"], ans: 0 },
-        { q: "由 MIRROR 12 位成員共同獻聲，為 2024 年世界巡迴演唱會主題曲是？", options: ["《ROCKETSTARS》", "《CATCH A VIBE》", "《RUMOURS》"], ans: 0 },
-        { q: "MIRROR 全員在 2024 年受邀前往哪一個著名的美國談話節目進行訪問？", options: ["《Good Morning America》", "《The Tonight Show》", "《The Late Show》"], ans: 0 },
+        { q: "12位成員共同獻聲 2024 世界巡迴演唱會主題曲是？", options: ["《ROCKETSTARS》", "《CATCH A VIBE》", "《RUMOURS》"], ans: 0 },
+        { q: "全員於 2024 年受邀前往哪一個著名的美國談話節目訪問？", options: ["《Good Morning America》", "《The Tonight Show》", "《The Late Show》"], ans: 0 },
         { q: "MIRROR新團歌《同往》的英文名稱是？", options: ["《Kizuna》", "《Rumours》", "《Attention》"], ans: 0 },
-        { q: "《同往》這首歌主要想表達什麼主題？", options: ["12位成員攜手追夢、沿途高低「同往」的羈絆", "熱血的拳擊精神與格鬥運動", "成員之間的搞笑互動與整蠱"], ans: 0 },
-        { q: "《同往》歌名源自日文「絆」的意思？", options: ["是的，代表緊密相連的羈絆 (Kizuna)", "不是，代表「晴空」的意思", "不是，代表「再見」的意思"], ans: 0 },
+        { q: "《同往》這首歌主要想表達什麼主題？", options: ["12位成員攜手追夢、沿途高低「同往」的羈絆", "表達逃離生活壓力、尋找生活共鳴與輕鬆陪伴", "團結、突破與不斷成長的決心"], ans: 0 },
+        { q: "《同往》歌名源自日文「絆」的意思？", options: ["代表緊密相連的羈絆 (Kizuna)", "代表「同住」的意思", "代表「會再見的」的意思"], ans: 0 },
         { q: "《同往》的作曲人是？", options: ["林家謙", "張繼聰", "蘇道哲"], ans: 1 },
-        { q: "成員在分享《同往》時，最常提到的感覺是？", options: ["12個人一起面對困難與共同進退的「感動」與「男人的浪漫」", "訓練過程中的痛苦與孤獨", "希望快點放假和休息的放鬆感"], ans: 0 },
-        { q: "《同往》希望帶給聽眾和粉絲的訊息主要是？", options: ["「沿途高低同往」：無論面對什麼，大家都要一起面對、永不放棄", "告訴大家要多運動保持健康", "宣傳12位成員的新電影計劃"], ans: 0 }
+        { q: "《同往》希望帶給聽眾和粉絲的訊息主要是？", options: ["「沿途高低同往」：無論面對什麼，大家都要一起面對", "不斷超越自我、尋求突破的決心", "放假和休息的重要性"], ans: 0 }
     ];
 
-    // 階段二成員專屬謎題與 Emoji (已按新排位調整)
     const phase2Questions = [
         {
             id: 0, name: "Anson Lo (盧瀚霆)", emoji: "👶🏼",
             pool: [
-                { q: "Anson Lo (盧瀚霆) 的個人粉絲名稱為？", options: ["神徒", "牧羊人", "教主粉"], ans: 0 },
-                { q: "Anson Lo 在出道前的主要職業是什麼？", options: ["模特兒", "職業舞蹈員", "健身教練"], ans: 1 },
-                { q: "下列哪首是 Anson Lo 的代表跳唱歌曲？", options: ["《Megahit》", "《E先生 連環不幸事件》", "《水刑物語》"], ans: 0 },
+                { q: "Anson Lo 的個人粉絲名稱為？", options: ["神徒", "SontosBB", "LoLo"], ans: 0 },
+                { q: "Anson Lo 在出道前的主要職業是什麼？", options: ["教煮", "職業舞蹈員", "總裁"], ans: 1 },
+                { q: "下列哪首是 Anson Lo 的代表跳唱歌曲？", options: ["《Megahit》", "《永順街39號》", "《你都有今日》"], ans: 0 },
                 { q: "Anson Lo (盧瀚霆) 的生日日期是哪一天？", options: ["7月7日", "6月9日", "10月16日"], ans: 0 }
             ]
         },
@@ -472,15 +467,15 @@
             pool: [
                 { q: "Lokman 擅長哪種舞種？", options: ["Ballet", "Locking", "Breakdance"], ans: 1 },
                 { q: "Lokman 在成名前曾主演過哪部關於跳舞的電影？", options: ["《狂舞派》", "《點五步》", "《逆流大叔》"], ans: 0 },
-                { q: "Lokman 的個人粉絲名稱為？", options: ["頭巾", "頭巾兵團", "隊長兵團"], ans: 1 },
-                { q: "隊長 Lokman (楊樂文) 的生日日期是哪一天？", options: ["9月26日", "9月21日", "11月20日"], ans: 0 }
+                { q: "Lokman 的個人粉絲名稱為？", options: ["檸檬糖", "頭巾兵團", "文文"], ans: 1 },
+                { q: "隊長 Lokman (楊樂文) 的生日日期是哪一天？", options: ["9月26日", "10月9日", "11月20日"], ans: 0 }
             ]
         },
         {
             id: 2, name: "Ian (陳卓賢)", emoji: "🐨",
             pool: [
                 { q: "Ian 的個人粉絲名稱為？", options: ["Hellos", "Hellosss", "Hello"], ans: 1 },
-                { q: "Ian 在入行前曾是哪項運動的香港代表隊成員？", options: ["足球", "男子排球", "劍擊"], ans: 1 },
+                { q: "Ian 入行前曾是哪項運動的香港代表隊成員？", options: ["足球", "男子排球", "劍擊"], ans: 1 },
                 { q: "Ian 曾為自己的作品《鯨落》擔任什麼職位？", options: ["僅作詞", "僅作曲", "作曲及作詞"], ans: 2 },
                 { q: "Ian (陳卓賢) 的生日日期是哪一天？", options: ["6月9日", "7月7日", "4月30日"], ans: 0 }
             ]
@@ -488,18 +483,18 @@
         {
             id: 3, name: "Jeremy (李駿傑)", emoji: "🦄",
             pool: [
-                { q: "Jeremy 的個人粉絲名稱為？", options: ["Unicorn", "小李子", "駿友"], ans: 0 },
+                { q: "Jeremy 的個人粉絲名稱為？", options: ["Unicorn", "獸獸", "駿友"], ans: 0 },
                 { q: "Jeremy 第一首推出的個人派台單曲是？", options: ["《半》", "《九》", "《阿波羅》"], ans: 0 },
                 { q: "Jeremy 曾在《全民造星》中被稱為以下哪種形象？", options: ["花美男", "肌肉男", "搞笑高手"], ans: 0 },
-                { q: "Jeremy (李駿傑) 的生日日期是哪一天？", options: ["9月8日", "9月21日", "1月21日"], ans: 0 }
+                { q: "Jeremy (李駿傑) 的生日日期是哪一天？", options: ["9月8日", "7月16日", "11月20日"], ans: 0 }
             ]
         },
         {
             id: 4, name: "Stanley (邱士縉)", emoji: "🐲",
             pool: [
-                { q: "Stanley 的個人粉絲名稱為？", options: ["TeamStanley", "史丹尼", "大表粉"], ans: 0 },
+                { q: "Stanley 的個人粉絲名稱為？", options: ["TeamStanley", "波波", "大表粉"], ans: 0 },
                 { q: "Stanley 演出的哪部電視劇？", options: ["《野人老師》", "《社畜再培訓先導計劃 》", "《反起跑聯盟》"], ans: 0 },
-                { q: "Stanley 在團體中常被成員戲稱為什麼？", options: ["大表哥", "大表", "哥哥"], ans: 0 },
+                { q: "Stanley 在團體中常被成員戲稱為什麼？", options: ["大表哥", "大表波", "大表"], ans: 0 },
                 { q: "Stanley (邱士縉) 的生日日期是哪一天？", options: ["8月20日", "7月29日", "10月16日"], ans: 0 }
             ]
         },
@@ -517,17 +512,17 @@
             pool: [
                 { q: "AK 的全名是？", options: [ "江𤒹生", "汪𤒹生", "江畢生"], ans: 0 },
                 { q: "AK 的個人粉絲名稱為？", options: ["生粉", "米粉", "老闆"], ans: 0 },
-                { q: "AK 創立的個人服裝品牌名稱是？", options: ["KYUBI", "DEZERT", "MIRRORWEAR"], ans: 0 },
+                { q: "AK 創立的個人服裝品牌名稱是？", options: ["KYUBI", "DEZERT", "NADE"], ans: 0 },
                 { q: "AK (江𤒹生) 的生日日期是哪一天？", options: ["10月16日", "9月26日", "8月20日"], ans: 0 }
             ]
         },
         {
             id: 7, name: "Alton (王智德)", emoji: "🦍",
             pool: [
-                { q: "Alton 的個人粉絲名稱為？", options: ["王粉", "蛋白粉", "力量粉"], ans: 1 },
-                { q: "Alton 在團體表演中主要負責的部分是？", options: ["高音主唱", "饒舌 (Rap)", "現代舞"], ans: 1 },
+                { q: "Alton 的個人粉絲名稱為？", options: ["王勁", "蛋白粉", "力量粉"], ans: 1 },
+                { q: "Alton 在團體表演中主要負責的部分是？", options: ["高音主唱", "饒舌 (Rap)", "主唱"], ans: 1 },
                 { q: "Alton 的金句「尋求無悔真生活」出自哪裡？", options: ["《全民造星》參賽感言", "他的歌曲歌詞", "他的個人直播"], ans: 0 },
-                { q: "Alton (王智德) 的生日日期是哪一天？", options: ["9月21日", "9月26日", "7月3日"], ans: 0 }
+                { q: "Alton (王智德) 的生日日期是哪一天？", options: ["9月21日", "5月26日", "7月3日"], ans: 0 }
             ]
         },
         {
@@ -535,8 +530,8 @@
             pool: [
                 { q: "Frankie 的個人粉絲名稱為？", options: ["皮寶寶", "皮皮", "寶寶"], ans: 0 },
                 { q: "Frankie 在成員中公認的特色是？", options: ["隊中顏值擔當", "隊中最高成員", "隊中體力最強"], ans: 0 },
-                { q: "Frankie 演出的哪部音樂劇？", options: ["《麻甩媽咪》", "《小男人周記》", "《IT狗2.0》"], ans: 1 },
-                { q: "Frankie (陳瑞輝) 的生日日期是哪一天？", options: ["7月29日", "7月7日", "4月30日"], ans: 0 }
+                { q: "Frankie 演出的哪部音樂劇？", options: ["麥卡錫", "《小男人周記》", "《IT狗2.0》"], ans: 1 },
+                { q: "Frankie (陳瑞輝) 的生日日期是哪一天？", options: ["6月8日", "7月7日", "4月30日"], ans: 0 }
             ]
         },
         {
@@ -561,8 +556,8 @@
             id: 11, name: "Tiger (邱傲然)", emoji: "🐯",
             pool: [
                 { q: "Tiger 是 MIRROR 裡面的什麼擔當？", options: ["隊長", "最年幼成員", "副隊長"], ans: 1 },
-                { q: "Tiger 除了演戲跳舞，還具備哪項專業技能？", options: ["烹飪", "執導 MV/短片", "職業賽車"], ans: 1 },
-                { q: "Tiger 的個人粉絲名稱為？", options: ["小虎隊", "小虎", "虎虎"], ans: 0 },
+                { q: "Tiger 除了演戲跳舞，還具備哪項專業技能？", options: ["烹飪", "執導 MV/短片", "車手"], ans: 1 },
+                { q: "Tiger 的個人粉絲名稱為？", options: ["小虎隊", "老虎仔", "虎虎"], ans: 0 },
                 { q: "Tiger (邱傲然) 的生日日期是哪一天？", options: ["7月3日", "7月29日", "9月21日"], ans: 0 }
             ]
         }
@@ -601,9 +596,7 @@
     let shuffledDinosPool = [];
     function initPhase1Pool() {
         shuffledDinosPool = [];
-        // 將 30 條團體綜合問題複製並打亂隨機排序
         const randomizedQuestions = [...phase1Questions].sort(() => Math.random() - 0.5);
-        // 取前 12 條隨機問題分配給這局的 12 隻恐龍
         for(let i = 0; i < 12; i++) {
             shuffledDinosPool.push({ id: i, question: randomizedQuestions[i], bushKey: 'bush1', phase: 1 });
         }
