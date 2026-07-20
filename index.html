@@ -1278,16 +1278,21 @@
             }
         }
 
-        // 階段二特殊邏輯：YouTube (youtube.png) 觸碰跳轉
-        if (currentPhase === 2 && youtubeNode.active) {
-            const distYtb = Math.hypot(youtubeNode.x - player.x, youtubeNode.y - player.y);
-            if (distYtb < 40) {
-                window.open('https://youtu.be/fcf3RsDaqes?si=fLoUI1gSAqDBpFgy', '_blank');
-                // 將玩家推開避免重複觸發
-                player.x += (player.x - youtubeNode.x > 0 ? 50 : -50);
-                player.y += (player.y - youtubeNode.y > 0 ? 50 : -50);
-            }
-        }
+        // 階段二特殊邏輯：YouTube (youtube.png) 經過自動跳轉
+if (currentPhase === 2 && youtubeNode.active) {
+    const distYtb = Math.hypot(youtubeNode.x - player.x, youtubeNode.y - player.y);
+    
+    // 當玩家與 YouTube 圖示的距離小於 40（即經過/觸碰）時觸發
+    if (distYtb < 40) {
+        // 自動開啟 YouTube 連結
+        window.open('https://youtu.be/fcf3RsDaqes?si=fLoUI1gSAqDBpFgy', '_blank');
+        
+        // 將玩家位置輕微外移，避免下一幀重複觸發跳轉
+        const angle = Math.atan2(player.y - youtubeNode.y, player.x - youtubeNode.x);
+        player.x = youtubeNode.x + Math.cos(angle) * 55;
+        player.y = youtubeNode.y + Math.sin(angle) * 55;
+    }
+}
 
         let isMoved = false;
         if (moveX !== 0 || moveY !== 0) {
