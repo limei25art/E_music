@@ -392,7 +392,8 @@
                 <div class="pill pill-btn" id="audioToggleBtn" onclick="toggleAudio()"><span id="audioIcon">🎵</span></div>
             </div>
         </div>
-        <div class="controls-hint" id="controlsHint">💡 鍵盤 WASD / 方向鍵 或 觸控搖桿皆可移動</div>
+        <div class="controls-hint" id="controlsHint">鍵盤方向鍵 或 觸控搖桿皆可移動
+        </div>
     </div>
 
     <div class="modal-container center-text-modal" id="startScreen">
@@ -441,6 +442,18 @@
             <span class="subtitle">FINAL CALL</span>
             <p>恭喜！你已為全體 12 位成員尋回專屬形象與記憶！<br>現在，帶著整支 MIRROR 隊伍回到地圖正中央的 <strong>大本營</strong> 進行最後的慶典吧！</p>
             <button class="btn" style="background: linear-gradient(135deg, #1F3D7A, #3B6BB0);" onclick="closePhase2EndHint()">回到大本營</button>
+        </div>
+    </div>
+
+    <!-- 經過 YouTube 時顯示的 POPUP 彈窗 -->
+    <div class="modal-container center-text-modal" id="youtubePopupScreen">
+        <div class="modal">
+            <div class="emoji-art">▶️🎶✨</div>
+            <h2>發現星空影音廣播</h2>
+            <span class="subtitle">YOUTUBE MUSIC EXCLUSIVE</span>
+            <p>你靠近了隱藏的星空影音節點！<br>是否要即刻前往 YouTube 聆聽 MIRROR 專屬影音內容？</p>
+            <button class="btn" onclick="openYouTubeLink()">▶️ 前往觀看</button>
+            <button class="btn" style="background: rgba(142, 188, 243, 0.12); color: #F0F4F8; border: 1px solid rgba(142, 188, 243, 0.3); box-shadow: none;" onclick="closeYouTubePopup()">繼續探索</button>
         </div>
     </div>
 
@@ -682,7 +695,7 @@
     const starryParticles = []; 
     const shootingStars = [];
 
-        const phase1Questions = [
+    const phase1Questions = [
         { q: "MIRROR 正式的出道日期是哪一天？", options: ["2018年11月3日", "2018年10月3日", "2019年1月1日"], ans: 0 },
         { q: "MIRROR 名字的含意是什麼？", options: ["面對自己真實一面", "象徵鏡子能反射無限可能，每位成員都是獨特鏡面", "代表每位成員不同面向"], ans: 1 },
         { q: "MIRROR 共有多少位成員？", options: ["7位", "12位", "14位"], ans: 1 },
@@ -748,7 +761,7 @@
             pool: [
                 { q: "Jeremy 的個人粉絲名稱為？", options: ["Unicorn", "獸獸", "駿友"], ans: 0 },
                 { q: "Jeremy 第一首推出的個人派台單曲是？", options: ["《半》", "《九》", "《阿波羅》"], ans: 0 },
-                { q: "Jeremy擅長的演唱類型？", options: ["高音 / 情感", "Rap", "低音"], ans: 0 },
+                { q: "Jeremy擅長 的演唱類型？", options: ["高音 / 情感", "Rap", "低音"], ans: 0 },
                 { q: "Jeremy 的生日日期是哪一天？", options: ["9月8日", "7月16日", "11月20日"], ans: 0 }
             ]
         },
@@ -825,6 +838,7 @@
             ]
         }
     ];
+
     // 生成邊界障礙物位置數據
     const borders = [];
     for(let i = 0; i <= WORLD_SIZE; i += 50) {
@@ -1225,6 +1239,31 @@
         scoreDisp.innerText = `🧭 帶領成員隊伍回營 ⛺`; scoreDisp.classList.add('highlight');
     }
 
+    // --- YouTube POPUP 控制邏輯 ---
+    function triggerYouTubePopup() {
+        AudioEngine.playTone(587.33, 'sine', 0.2, 0.12);
+        gameState = 'youtube_popup'; 
+        input.isDown = false; 
+        joystickEl.style.display = 'none';
+        document.getElementById('youtubePopupScreen').classList.add('active');
+    }
+
+    window.openYouTubeLink = function() {
+        playClickSound();
+        window.open('https://youtu.be/fcf3RsDaqes?si=fLoUI1gSAqDBpFgy', '_blank');
+        closeYouTubePopup();
+    }
+
+    window.closeYouTubePopup = function() {
+        playClickSound();
+        document.getElementById('youtubePopupScreen').classList.remove('active');
+        // 將玩家輕微外移，防止關閉 POPUP 後重複觸發
+        const angle = Math.atan2(player.y - youtubeNode.y, player.x - youtubeNode.x);
+        player.x = youtubeNode.x + Math.cos(angle) * 55;
+        player.y = youtubeNode.y + Math.sin(angle) * 55;
+        gameState = 'phase2_playing';
+    }
+
     function endGame() {
         AudioEngine.playWinFanfare();
         gameState = 'end'; clearInterval(timerInterval); joystickEl.style.display = 'none';
@@ -1278,21 +1317,15 @@
             }
         }
 
-        // 階段二特殊邏輯：YouTube (youtube.png) 經過自動跳轉
-if (currentPhase === 2 && youtubeNode.active) {
-    const distYtb = Math.hypot(youtubeNode.x - player.x, youtubeNode.y - player.y);
-    
-    // 當玩家與 YouTube 圖示的距離小於 40（即經過/觸碰）時觸發
-    if (distYtb < 40) {
-        // 自動開啟 YouTube 連結
-        window.open('https://youtu.be/fcf3RsDaqes?si=fLoUI1gSAqDBpFgy', '_blank');
-        
-        // 將玩家位置輕微外移，避免下一幀重複觸發跳轉
-        const angle = Math.atan2(player.y - youtubeNode.y, player.x - youtubeNode.x);
-        player.x = youtubeNode.x + Math.cos(angle) * 55;
-        player.y = youtubeNode.y + Math.sin(angle) * 55;
-    }
-}
+        // 階段二特殊邏輯：經過/觸碰 YouTube (youtube.png) 觸發 POPUP 彈窗
+        if (currentPhase === 2 && youtubeNode.active) {
+            const distYtb = Math.hypot(youtubeNode.x - player.x, youtubeNode.y - player.y);
+            
+            // 當玩家與 YouTube 圖示的距離小於 40 時觸發 POPUP
+            if (distYtb < 40) {
+                triggerYouTubePopup();
+            }
+        }
 
         let isMoved = false;
         if (moveX !== 0 || moveY !== 0) {
