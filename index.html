@@ -1104,7 +1104,7 @@
     }
 
     function createCelebrationParticles(x, y) {
-        const emojis = currentPhase === 1 ? ['💖', '✨', '🍀', '🌸'] : ['💖', '✨', '⭐', '🌌', '💫'];
+        const emojis = currentPhase === 1 ? ['💖', '✨', '🍀'] : ['💖', '✨', '⭐'];
         const count = 8; 
         for (let i = 0; i < count; i++) {
             const angle = Math.random() * Math.PI * 2;
@@ -1423,7 +1423,7 @@
                                 sheep.lastParticleTime = now;
                                 particleSystems.push({
                                     x: sheep.x,
-                                    y: sheep.y - 10,
+                                    y: sheep.y - 8,
                                     vx: (Math.random() - 0.5) * 1.5,
                                     vy: -Math.random() * 2 - 1,
                                     text: "咩",
