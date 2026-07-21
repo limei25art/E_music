@@ -64,7 +64,7 @@
         .pill {
             background: rgba(253, 251, 247, 0.88);
             border: 1px solid rgba(58, 90, 64, 0.18);
-            padding: 10px 20px; 
+            padding: 8px 18px; 
             border-radius: 30px 10px 30px 10px; 
             font-weight: 600; 
             color: var(--biophilic-earth);
@@ -73,12 +73,20 @@
             letter-spacing: 0.8px;
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             backdrop-filter: blur(8px);
-            display: flex; align-items: center; gap: 6px;
+            display: flex; align-items: center; gap: 8px;
+        }
+
+        .pill-icon {
+            width: 20px;
+            height: 20px;
+            object-fit: contain;
+            display: block;
         }
 
         .pill-btn {
             cursor: pointer;
             user-select: none;
+            padding: 8px 12px;
         }
         .pill-btn:active {
             transform: scale(0.92);
@@ -385,11 +393,19 @@
     <div id="ui-layer">
         <div class="hud" id="hud" style="display:none;">
             <div class="hud-group">
-                <div class="pill" id="timerDisplay">⏱️ 00:00</div>
-                <div class="pill" id="scoreDisplay">🦖 0 / 12</div>
+                <div class="pill" id="timerDisplay">
+                    <img src="assets/icon_time.png" class="pill-icon" alt="Time">
+                    <span id="timerText">00:00</span>
+                </div>
+                <div class="pill" id="scoreDisplay">
+                    <img src="assets/dino.png" class="pill-icon" id="scoreIcon" alt="Count">
+                    <span id="scoreText">0 / 12</span>
+                </div>
             </div>
             <div class="hud-group">
-                <div class="pill pill-btn" id="audioToggleBtn" onclick="toggleAudio()"><span id="audioIcon">🎵</span></div>
+                <div class="pill pill-btn" id="audioToggleBtn" onclick="toggleAudio()">
+                    <img src="assets/icon_speaker_ON.png" class="pill-icon" id="audioIcon" alt="Audio">
+                </div>
             </div>
         </div>
         <div class="controls-hint" id="controlsHint">鍵盤方向鍵 或 觸控搖桿皆可移動
@@ -564,7 +580,7 @@
 
     window.toggleAudio = function() {
         AudioEngine.muted = !AudioEngine.muted;
-        document.getElementById('audioIcon').innerText = AudioEngine.muted ? '🔇' : '🎵';
+        document.getElementById('audioIcon').src = AudioEngine.muted ? 'assets/icon_speaker_OFF.png' : 'assets/icon_speaker_ON.png';
         if (AudioEngine.bgm) {
             AudioEngine.bgm.muted = AudioEngine.muted;
             if (!AudioEngine.muted && gameState !== 'start') {
@@ -699,7 +715,6 @@
 
     // --- 階段一新增：小羊系統參數與初始化 ---
     const sheepList = [];
-    // 增加 5 隻，改為隨機 8-10 隻
     const sheepCount = 18 + Math.floor(Math.random() * 3); 
     const SHEEP_TRIGGER_DIST = 70; // 恐龍經過產生粒子的判定距離
 
@@ -713,8 +728,8 @@
             moveTimer: 0,
             size: 45,
             lastParticleTime: 0,
-            walkDir: Math.random() < 1 ? 1.2 : -1.2, // 行走方向：1為下，-1為上
-            walkPhase: Math.random() * Math.PI * 2  // 上下震盪相位角
+            walkDir: Math.random() < 1 ? 1.2 : -1.2,
+            walkPhase: Math.random() * Math.PI * 2
         });
     }
 
@@ -1055,7 +1070,7 @@
         if(gameState === 'start' || gameState === 'end') return;
         timeElapsed = Math.floor((Date.now() - startTime) / 1000);
         const m = String(Math.floor(timeElapsed / 60)).padStart(2, '0'), s = String(timeElapsed % 60).padStart(2, '0');
-        document.getElementById('timerDisplay').innerText = `⏱️ ${m}:${s}`;
+        document.getElementById('timerText').innerText = `${m}:${s}`;
     }
 
     function triggerQuestion(index) {
@@ -1119,11 +1134,11 @@
                 player.caughtDinos++;
                 createCelebrationParticles(dino.x, dino.y);
                 if(player.caughtDinos < 12) {
-                    document.getElementById('scoreDisplay').innerText = `🦖 ${player.caughtDinos} / 12`;
+                    document.getElementById('scoreText').innerText = `${player.caughtDinos} / 12`;
                     spawnDino();
                     gameState = 'playing';
                 } else {
-                    document.getElementById('scoreDisplay').innerText = `🦖 12 / 12 ✨`;
+                    document.getElementById('scoreText').innerText = `12 / 12 ✨`;
                     triggerCampHint();
                 }
             } else {
@@ -1135,11 +1150,11 @@
                 createCelebrationParticles(dino.x, dino.y);
 
                 if(player.transformedMembers < 12) {
-                    document.getElementById('scoreDisplay').innerText = `🌟 ${player.transformedMembers} / 12`;
+                    document.getElementById('scoreText').innerText = `${player.transformedMembers} / 12`;
                     spawnDino();
                     gameState = 'phase2_playing';
                 } else {
-                    document.getElementById('scoreDisplay').innerText = `🌟 12 / 12 🎉`;
+                    document.getElementById('scoreText').innerText = `12 / 12 🎉`;
                     triggerPhase2EndHint();
                 }
             }
@@ -1180,7 +1195,7 @@
         document.getElementById('campHintScreen').classList.remove('active'); 
         gameState = 'playing';
         const scoreDisp = document.getElementById('scoreDisplay');
-        scoreDisp.innerText = `🧭 引導 12 隻至大本營`; scoreDisp.classList.add('highlight');
+        document.getElementById('scoreText').innerText = `引導 12 隻至大本營`; scoreDisp.classList.add('highlight');
     }
 
     function triggerPhase2Start() {
@@ -1245,7 +1260,7 @@
         for(let i = 0; i < 6; i++) { spawnDino(); }
 
         const scoreDisp = document.getElementById('scoreDisplay');
-        scoreDisp.innerText = `🌟 0 / 12`; scoreDisp.classList.remove('highlight');
+        document.getElementById('scoreText').innerText = `0 / 12`; scoreDisp.classList.remove('highlight');
     }
 
     function triggerPhase2EndHint() {
@@ -1259,7 +1274,7 @@
         document.getElementById('phase2EndHintScreen').classList.remove('active');
         gameState = 'phase2_playing';
         const scoreDisp = document.getElementById('scoreDisplay');
-        scoreDisp.innerText = `🧭 帶領成員隊伍回營 ⛺`; scoreDisp.classList.add('highlight');
+        document.getElementById('scoreText').innerText = `帶領成員隊伍回營 ⛺`; scoreDisp.classList.add('highlight');
     }
 
     // --- YouTube POPUP 控制邏輯 ---
@@ -1381,15 +1396,12 @@
             sheepList.forEach(sheep => {
                 sheep.moveTimer--;
                 if (sheep.moveTimer <= 0) {
-                    // 隨機選取草地新目標點與隨機停留時間
                     sheep.targetX = Math.max(80, Math.min(WORLD_SIZE - 80, sheep.x + (Math.random() - 0.5) * 300));
                     sheep.targetY = Math.max(80, Math.min(WORLD_SIZE - 80, sheep.y + (Math.random() - 0.5) * 300));
                     sheep.moveTimer = Math.floor(Math.random() * 120 + 60);
-                    // 隨機切換上下走動方向
                     sheep.walkDir = Math.random() < 0.5 ? 1 : -1;
                 }
 
-                // 朝目標點移動 (包含上下擺動 offset)
                 const sdx = sheep.targetX - sheep.x;
                 const sdy = sheep.targetY - sheep.y;
                 const sdist = Math.hypot(sdx, sdy);
@@ -1398,10 +1410,8 @@
                     sheep.y += (sdy / sdist) * sheep.speed;
                 }
 
-                // 上下行走動作相位的更新
                 sheep.walkPhase += 0.08 * sheep.walkDir;
 
-                // 檢查是否有跟隨的恐龍經過
                 let visibleFollowerIndex = 0;
                 activeFollowers.forEach((follower, index) => {
                     if (index < player.caughtDinos) {
@@ -1411,7 +1421,6 @@
                             const dDist = Math.hypot(sheep.x - dinoPos.x, sheep.y - dinoPos.y);
                             if (dDist < SHEEP_TRIGGER_DIST && now - sheep.lastParticleTime > 400) {
                                 sheep.lastParticleTime = now;
-                                // 產生 #ffffff 色的 "咩" 字 Particle
                                 particleSystems.push({
                                     x: sheep.x,
                                     y: sheep.y - 10,
@@ -1539,7 +1548,6 @@
                 ctx.shadowColor = 'rgba(26, 47, 22, 0.3)';
                 ctx.shadowBlur = 6;
                 ctx.shadowOffsetY = 4;
-                // 上下跳躍/行走幅度的震盪計算
                 const walkOffsetY = Math.sin(sheep.walkPhase) * 6;
                 drawImageCentered(ctx, images.sheep, sheep.x, sheep.y + walkOffsetY, sheep.size, sheep.size);
                 ctx.restore();
