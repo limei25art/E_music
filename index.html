@@ -593,6 +593,7 @@
         camp: 'assets/camp.png',
         camp_p2: 'assets/camp_p2.png',
         dino: 'assets/dino.png',
+        sheep: 'assets/sheep.png',
         bush1: 'assets/bush1.png',
         bush2: 'assets/bush2.png',
         tree1: 'assets/tree1.png',
@@ -644,6 +645,7 @@
             if(key === 'player') cctx.fillText('🏃', 32, 32);
             else if(key === 'camp' || key === 'camp_p2') cctx.fillText('⛺', 32, 32);
             else if(key === 'dino') cctx.fillText('🦖', 32, 32);
+            else if(key === 'sheep') cctx.fillText('🐑', 32, 32);
             else if(key.startsWith('bush')) cctx.fillText('🌿', 32, 32);
             else if(key.startsWith('tree')) cctx.fillText('🌲', 32, 32);
             else if(key.startsWith('rock')) cctx.fillText('🪨', 32, 32);
@@ -694,6 +696,27 @@
     let visualEffects = [], particleSystems = [];
     const starryParticles = []; 
     const shootingStars = [];
+
+    // --- 階段一新增：小羊系統參數與初始化 ---
+    const sheepList = [];
+    // 增加 5 隻，改為隨機 8-10 隻
+    const sheepCount = 18 + Math.floor(Math.random() * 3); 
+    const SHEEP_TRIGGER_DIST = 70; // 恐龍經過產生粒子的判定距離
+
+    for (let i = 0; i < sheepCount; i++) {
+        sheepList.push({
+            x: Math.random() * (WORLD_SIZE - 200) + 100,
+            y: Math.random() * (WORLD_SIZE - 200) + 100,
+            targetX: Math.random() * (WORLD_SIZE - 200) + 100,
+            targetY: Math.random() * (WORLD_SIZE - 200) + 100,
+            speed: 0.8 + Math.random() * 0.1,
+            moveTimer: 0,
+            size: 45,
+            lastParticleTime: 0,
+            walkDir: Math.random() < 1 ? 1.2 : -1.2, // 行走方向：1為下，-1為上
+            walkPhase: Math.random() * Math.PI * 2  // 上下震盪相位角
+        });
+    }
 
     const phase1Questions = [
         { q: "MIRROR 正式的出道日期是哪一天？", options: ["2018年11月3日", "2018年10月3日", "2019年1月1日"], ans: 0 },
@@ -1352,6 +1375,61 @@
             if(player.history.length > 200) player.history.pop();
         }
 
+        // --- 階段一新增：小羊自主行走與上下移動邏輯 ---
+        if (currentPhase === 1) {
+            const now = Date.now();
+            sheepList.forEach(sheep => {
+                sheep.moveTimer--;
+                if (sheep.moveTimer <= 0) {
+                    // 隨機選取草地新目標點與隨機停留時間
+                    sheep.targetX = Math.max(80, Math.min(WORLD_SIZE - 80, sheep.x + (Math.random() - 0.5) * 300));
+                    sheep.targetY = Math.max(80, Math.min(WORLD_SIZE - 80, sheep.y + (Math.random() - 0.5) * 300));
+                    sheep.moveTimer = Math.floor(Math.random() * 120 + 60);
+                    // 隨機切換上下走動方向
+                    sheep.walkDir = Math.random() < 0.5 ? 1 : -1;
+                }
+
+                // 朝目標點移動 (包含上下擺動 offset)
+                const sdx = sheep.targetX - sheep.x;
+                const sdy = sheep.targetY - sheep.y;
+                const sdist = Math.hypot(sdx, sdy);
+                if (sdist > 5) {
+                    sheep.x += (sdx / sdist) * sheep.speed;
+                    sheep.y += (sdy / sdist) * sheep.speed;
+                }
+
+                // 上下行走動作相位的更新
+                sheep.walkPhase += 0.08 * sheep.walkDir;
+
+                // 檢查是否有跟隨的恐龍經過
+                let visibleFollowerIndex = 0;
+                activeFollowers.forEach((follower, index) => {
+                    if (index < player.caughtDinos) {
+                        visibleFollowerIndex++;
+                        const dinoPos = player.history[visibleFollowerIndex * 8] || player.history[player.history.length - 1];
+                        if (dinoPos) {
+                            const dDist = Math.hypot(sheep.x - dinoPos.x, sheep.y - dinoPos.y);
+                            if (dDist < SHEEP_TRIGGER_DIST && now - sheep.lastParticleTime > 400) {
+                                sheep.lastParticleTime = now;
+                                // 產生 #ffffff 色的 "咩" 字 Particle
+                                particleSystems.push({
+                                    x: sheep.x,
+                                    y: sheep.y - 10,
+                                    vx: (Math.random() - 0.5) * 1.5,
+                                    vy: -Math.random() * 2 - 1,
+                                    text: "咩",
+                                    color: "#ffffff",
+                                    life: 0.8,
+                                    size: Math.random() * 6 + 18,
+                                    decay: 0.02
+                                });
+                            }
+                        }
+                    }
+                });
+            });
+        }
+
         camera.x += (player.x - camera.x) * 0.1; camera.y += (player.y - camera.y) * 0.1;
 
         if (currentPhase === 1) {
@@ -1454,6 +1532,20 @@
             });
         }
 
+        // --- 階段一新增：渲染小羊 (帶上下行走動作) ---
+        if (currentPhase === 1) {
+            sheepList.forEach((sheep) => {
+                ctx.save();
+                ctx.shadowColor = 'rgba(26, 47, 22, 0.3)';
+                ctx.shadowBlur = 6;
+                ctx.shadowOffsetY = 4;
+                // 上下跳躍/行走幅度的震盪計算
+                const walkOffsetY = Math.sin(sheep.walkPhase) * 6;
+                drawImageCentered(ctx, images.sheep, sheep.x, sheep.y + walkOffsetY, sheep.size, sheep.size);
+                ctx.restore();
+            });
+        }
+
         // 渲染大本營
         ctx.save();
         if (currentPhase === 2) {
@@ -1544,8 +1636,19 @@
         });
 
         particleSystems.forEach(p => {
-            ctx.save(); ctx.globalAlpha = p.life; ctx.font = `${p.size}px Arial`;
-            ctx.fillText(p.emoji, p.x, p.y); ctx.restore();
+            ctx.save(); 
+            ctx.globalAlpha = p.life; 
+            if (p.text) {
+                ctx.fillStyle = p.color || "#ffffff";
+                ctx.font = `bold ${p.size}px "PingFang HK", Arial, sans-serif`;
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+                ctx.shadowBlur = 4;
+                ctx.fillText(p.text, p.x, p.y);
+            } else {
+                ctx.font = `${p.size}px Arial`;
+                ctx.fillText(p.emoji, p.x, p.y);
+            }
+            ctx.restore();
         });
 
         // 繪製隊伍成員
