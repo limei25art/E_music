@@ -408,7 +408,7 @@
                 </div>
             </div>
         </div>
-        <div class="controls-hint" id="controlsHint">鍵盤方向鍵 或 觸控搖桿皆可移動
+        <div class="controls-hint" id="controlsHint">鍵盤方向鍵 或 觸控搖桿皆可移動<h2>尋找🍀/✨</h2>
         </div>
     </div>
 
@@ -416,8 +416,8 @@
         <div class="modal">
             <div class="emoji-art">🍀🌼⛺</div>
             <h2>MIRROR - KIZUNA</h2>
-            <span class="subtitle">12恐龍捉迷藏 專屬視覺版</span>
-            <p>歡迎來到極簡綠植藝術空間。<br>在陽光散落的林間尋找 12 隻隱藏的恐龍，<br>答對植物與團體謎題，並將牠們引導回中央大本營。</p>
+            <span class="subtitle">12恐龍捉迷藏</span>
+            <p>歡迎來到KIZUNA森林。<br>在林間尋找 12 隻隱藏的恐龍，<br>答對羈絆謎題，並將牠們引導回中央大本營。</p>
             <button class="btn" onclick="startGame()">踏入漫步</button>
         </div>
     </div>
@@ -446,7 +446,7 @@
             <div class="emoji-art">🌌✨💫</div>
             <h2>觸發新任務！</h2>
             <span class="subtitle">PHASE 2: MEMORIES SHATTERED</span>
-            <p>境遷時移！恐龍們受到星辰魔法召喚，重新隱藏於四處！<br><br>請再次踏入林間尋找隱秘的<strong>三葉草</strong>。這一次，整片原野將幻化為<strong>神祕星海</strong>！你需要回答成員個人專屬與生日問題，讓身邊跟隨的恐龍覺醒為成員的<strong>專屬守護形象</strong>！<br>全部變身成功後再帶領整隊人馬回大本營集合吧！</p>
+            <p>境遷時移！恐龍們受到星辰魔法召喚，重新隱藏於星空！<br><br>請再次踏入星空尋找隱秘的<strong>✨</strong>。這一次，整片原野將幻化為<strong>神祕星海</strong>！你需要回答12 位成員個人專屬問題，讓身邊跟隨的恐龍覺醒為成員！<br>全部變身成功後再帶領整隊人馬回大本營集合吧！</p>
             <button class="btn" onclick="startPhase2()">接受新任務</button>
         </div>
     </div>
@@ -456,7 +456,7 @@
             <div class="emoji-art">⛺🌈🌟</div>
             <h2>所有成員已歸位！</h2>
             <span class="subtitle">FINAL CALL</span>
-            <p>恭喜！你已為全體 12 位成員尋回專屬形象與記憶！<br>現在，帶著整支 MIRROR 隊伍回到地圖正中央的 <strong>大本營</strong> 進行最後的慶典吧！</p>
+            <p>恭喜！你已為全體 12 位成員尋回記憶！<br>現在，帶著整支 MIRROR 隊伍回到地圖正中央的 <strong>大本營</strong> 集合！</p>
             <button class="btn" style="background: linear-gradient(135deg, #1F3D7A, #3B6BB0);" onclick="closePhase2EndHint()">回到大本營</button>
         </div>
     </div>
@@ -467,7 +467,7 @@
             <div class="emoji-art">▶️🎶✨</div>
             <h2>發現星空影音廣播</h2>
             <span class="subtitle">YOUTUBE MUSIC EXCLUSIVE</span>
-            <p>你靠近了隱藏的星空影音節點！<br>是否要即刻前往 YouTube 聆聽 MIRROR 專屬影音內容？</p>
+            <p>你靠近了隱藏的星空影音節點！<br>是否要即刻前往 YouTube 聆聽 MIRROR 專屬影音？</p>
             <button class="btn" onclick="openYouTubeLink()">▶️ 前往觀看</button>
             <button class="btn" style="background: rgba(142, 188, 243, 0.12); color: #F0F4F8; border: 1px solid rgba(142, 188, 243, 0.3); box-shadow: none;" onclick="closeYouTubePopup()">繼續探索</button>
         </div>
@@ -478,7 +478,7 @@
             <div class="emoji-art">🏛️🏆⛺</div>
             <h2>旅程圓滿結束</h2>
             <span class="subtitle">MIRROR - KIZUNA</span>
-            <p>你已成功將所有 MIRROR 隊員與他們的專屬記憶帶回星海營地！<br>漫步總耗時：<strong id="finalTime">00:00</strong></p>
+            <p>你已成功將所有 MIRROR 隊員帶回營地！<br>漫步總耗時：<strong id="finalTime">00:00</strong></p>
             <button class="btn" onclick="playClickSound(); window.open('https://lnk.to/MirrorKIZUNA?utm_source=ig&utm_medium=social&utm_content=link_in_bio', '_blank')">🎵 聆聽 MIRROR - KIZUNA</button>
             <button class="btn" style="background: rgba(58, 90, 64, 0.08); color: var(--egarden-green-dark); box-shadow: none;" onclick="playClickSound(); location.reload()">重新探索空間</button>
         </div>
@@ -1163,7 +1163,7 @@
             optsDiv.style.display = 'none';
             qTitle.innerText = "答錯了！"; qTitle.style.color = "var(--error-red)";
             qSub.innerText = "WARNING"; qSub.style.color = "var(--error-red)";
-            document.getElementById('qText').innerText = "植物氣息受到了驚嚇，恐龍重新隱藏位置了 💨";
+            document.getElementById('qText').innerText = "🍀受到了驚嚇，恐龍重新隱藏位置了 💨";
             modalBox.classList.add('error-shake');
             
             visualEffects.push({ x: dino.x, y: dino.y, emoji: '💨', life: 1.0 });
