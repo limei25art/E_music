@@ -408,7 +408,7 @@
                 </div>
             </div>
         </div>
-        <div class="controls-hint" id="controlsHint">鍵盤方向鍵 或 觸控搖桿皆可移動<h2>尋找🍀/✨</h2>
+        <div class="controls-hint" id="controlsHint">鍵盤方向鍵 或 觸控搖桿皆可移動<br>尋找🍀/✨</br>
         </div>
     </div>
 
@@ -1495,9 +1495,15 @@
         }
     }
 
-    function drawImageCentered(ctx, img, x, y, width, height) {
+    function drawImageCentered(ctx, img, x, y, width, height, flipX = false) {
         if (!img || !img.complete || img.naturalWidth === 0) return;
-        ctx.drawImage(img, x - width / 2, y - height / 2, width, height);
+        ctx.save();
+        ctx.translate(x, y);
+        if (flipX) {
+            ctx.scale(-1, 1);
+        }
+        ctx.drawImage(img, -width / 2, -height / 2, width, height);
+        ctx.restore();
     }
 
     function draw() {
@@ -1541,7 +1547,7 @@
             });
         }
 
-        // --- 階段一新增：渲染小羊 (帶上下行走動作) ---
+        // --- 階段一新增：渲染小羊 (帶上下行走動作，行右時反轉 -X) ---
         if (currentPhase === 1) {
             sheepList.forEach((sheep) => {
                 ctx.save();
@@ -1549,7 +1555,9 @@
                 ctx.shadowBlur = 6;
                 ctx.shadowOffsetY = 4;
                 const walkOffsetY = Math.sin(sheep.walkPhase) * 6;
-                drawImageCentered(ctx, images.sheep, sheep.x, sheep.y + walkOffsetY, sheep.size, sheep.size);
+                const sdx = sheep.targetX - sheep.x;
+                const isWalkingRight = sdx > 0;
+                drawImageCentered(ctx, images.sheep, sheep.x, sheep.y + walkOffsetY, sheep.size, sheep.size, isWalkingRight);
                 ctx.restore();
             });
         }
@@ -1659,14 +1667,17 @@
             ctx.restore();
         });
 
-        // 繪製隊伍成員
+        // 繪製隊伍成員 (dino 行右時反轉 -X)
         let visibleFollowerCount = 0;
         activeFollowers.forEach((follower, index) => {
             const isVisible = (currentPhase === 1 && index < player.caughtDinos) || (currentPhase === 2);
             
             if(isVisible) {
                 visibleFollowerCount++;
-                const pos = player.history[visibleFollowerCount * 8] || player.history[player.history.length-1];
+                const idxInHistory = visibleFollowerCount * 8;
+                const pos = player.history[idxInHistory] || player.history[player.history.length-1];
+                const prevPos = player.history[idxInHistory + 1] || pos;
+
                 if(pos) {
                     ctx.save();
                     const bounceOffset = Math.abs(Math.sin(Date.now() * 0.005 + visibleFollowerCount)) * -6; 
@@ -1679,7 +1690,8 @@
                     
                     const imgToDraw = follower.transformed ? images[`member_${follower.id}`] : images.dino;
                     const fSize = 60; 
-                    drawImageCentered(ctx, imgToDraw, pos.x, pos.y + bounceOffset, fSize, fSize);
+                    const isMovingRight = pos.x - prevPos.x > 0;
+                    drawImageCentered(ctx, imgToDraw, pos.x, pos.y + bounceOffset, fSize, fSize, isMovingRight);
                     
                     ctx.restore();
                 }
