@@ -707,7 +707,7 @@
             else if(key === 'advance') cctx.fillText('🪐', 32, 32);
             else if(key === 'youtube') cctx.fillText('▶️', 32, 32);
             else {
-                const emojis = ['👶🏼','🕺','🐨','🦄','🐲','🐤','🦊','🦍','🍅','🍬','🐠','🐯'];
+                const emojis = ['🍅','🦍','🕺','🐲','🦊','🐠','🐨','👶','🦄','🐤','🍬','🐯'];
                 const idx = parseInt(key.split('_')[1]) || 0;
                 cctx.fillText(emojis[idx % 12], 32, 32);
             }
@@ -807,7 +807,7 @@
 
     const phase2Questions = [
         {
-            id: 0, name: "Anson Lo (盧瀚霆)", emoji: "👶🏼",
+            id: 7, name: "Anson Lo (盧瀚霆)", emoji: "👶🏼",
             pool: [
                 { q: "Anson Lo 的個人粉絲名稱為？", options: ["神徒", "SontosBB", "LoLo"], ans: 0 },
                 { q: "Anson Lo 在出道前的主要職業是什麼？", options: ["教煮", "職業舞蹈員", "總裁"], ans: 1 },
@@ -816,7 +816,7 @@
             ]
         },
         {
-            id: 1, name: "Lokman (楊樂文)", emoji: "🕺",
+            id: 2, name: "Lokman (楊樂文)", emoji: "🕺",
             pool: [
                 { q: "Lokman 擅長哪種舞種？", options: ["Ballet", "Locking", "Breakdance"], ans: 1 },
                 { q: "Lokman 在成名前曾主演過哪部關於跳舞的電影？", options: ["《狂舞派》", "《點五步》", "《逆流大叔》"], ans: 0 },
@@ -825,7 +825,7 @@
             ]
         },
         {
-            id: 2, name: "Ian (陳卓賢)", emoji: "🐨",
+            id: 6, name: "Ian (陳卓賢)", emoji: "🐨",
             pool: [
                 { q: "Ian 的個人粉絲名稱為？", options: ["Hellos", "Hellosss", "Hello"], ans: 1 },
                 { q: "Ian 入行前曾是哪項運動的香港代表隊成員？", options: ["足球", "男子排球", "劍擊"], ans: 1 },
@@ -834,7 +834,7 @@
             ]
         },
         {
-            id: 3, name: "Jeremy (李駿傑)", emoji: "🦄",
+            id: 8, name: "Jeremy (李駿傑)", emoji: "🦄",
             pool: [
                 { q: "Jeremy 的個人粉絲名稱為？", options: ["Unicorn", "獸獸", "駿友"], ans: 0 },
                 { q: "Jeremy 第一首推出的個人派台單曲是？", options: ["《半》", "《九》", "《阿波羅》"], ans: 0 },
@@ -843,7 +843,7 @@
             ]
         },
         {
-            id: 4, name: "Stanley (邱士縉)", emoji: "🐲",
+            id: 3, name: "Stanley (邱士縉)", emoji: "🐲",
             pool: [
                 { q: "Stanley 的個人粉絲名稱為？", options: ["TeamStanley", "波波", "Team波波"], ans: 0 },
                 { q: "Stanley 在《野人老師》中飾演什麼？", options: ["李白老師", "大表哥", "校長"], ans: 0 },
@@ -852,7 +852,7 @@
             ]
         },
         {
-            id: 5, name: "Edan (呂爵安)", emoji: "🐤",
+            id: 9, name: "Edan (呂爵安)", emoji: "🐤",
             pool: [
                 { q: "Edan 的個人粉絲名稱為？", options: ["爵屎", "雀屎", "女友粉"], ans: 0 },
                 { q: "Edan 在港版《大叔的愛》中飾演的角色名字是？", options: ["田一雄", "凌少牧", "KK"], ans: 0 },
@@ -861,7 +861,7 @@
             ]
         },
         {
-            id: 6, name: "Anson Kong (江𤒹生)", emoji: "🦊",
+            id: 4, name: "Anson Kong (江𤒹生)", emoji: "🦊",
             pool: [
                 { q: "AK 的姓名正寫是？", options: [ "江𤒹生", "汪𤒹生", "江畢生"], ans: 0 },
                 { q: "AK 的個人粉絲名稱為？", options: ["生粉", "米粉", "老闆"], ans: 0 },
@@ -870,7 +870,7 @@
             ]
         },
         {
-            id: 7, name: "Alton (王智德)", emoji: "🦍",
+            id: 1, name: "Alton (王智德)", emoji: "🦍",
             pool: [
                 { q: "Alton 的個人粉絲名稱為？", options: ["王勁", "蛋白粉", "力量粉"], ans: 1 },
                 { q: "Alton 在團體表演中主要負責的部分是？", options: ["高音主唱", "饒舌 (Rap) 與舞蹈", "和音主唱"], ans: 1 },
@@ -879,7 +879,7 @@
             ]
         },
         {
-            id: 8, name: "Frankie (陳瑞輝)", emoji: "🍅",
+            id: 0, name: "Frankie (陳瑞輝)", emoji: "🍅",
             pool: [
                 { q: "Frankie 的個人粉絲名稱為？", options: ["皮寶寶", "皮皮", "寶寶"], ans: 0 },
                 { q: "Frankie 在 MIRROR 中給人的印象是？", options: ["零死角美男子", "最活潑話癆", "冷酷硬漢"], ans: 0 },
@@ -888,7 +888,7 @@
             ]
         },
         {
-            id: 9, name: "Keung To (姜濤)", emoji: "🍬",
+            id: 10, name: "Keung To (姜濤)", emoji: "🍬",
             pool: [
                 { q: "姜濤的個人粉絲名稱為？", options: ["姜糖", "糖", "糖水"], ans: 0 },
                 { q: "姜濤第一首推出的首發個人派台單曲是？", options: ["一號種籽", "蒙著嘴說愛你", "Dear My Friend"], ans: 0 },
@@ -897,7 +897,7 @@
             ]
         },
         {
-            id: 10, name: "Jer (柳應廷)", emoji: "🐠",
+            id: 5, name: "Jer (柳應廷)", emoji: "🐠",
             pool: [
                 { q: "Jer 的個人粉絲名稱為？", options: ["柳炒", "柳柳粉", "闌闌粉"], ans: 1 },
                 { q: "Jer 的經典「物語三部曲」首發作是？", options: ["《水刑物語》", "《風靈物語》", "《狂人日記》"], ans: 0 },
