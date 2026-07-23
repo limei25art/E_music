@@ -259,13 +259,13 @@
         }
         
         .modal h2 { 
-            margin: 0 0 8px; 
+            margin: 0 0 1px; 
             font-size: 24px; 
             color: var(--egarden-green-dark); 
             font-weight: 700; 
             letter-spacing: 0.5px;
             font-family: serif;
-            padding-right: 30px; 
+            padding-right: 0px; 
             transition: color 0.3s ease;
         }
 
@@ -455,7 +455,7 @@
             <div class="emoji-art">🍀🌼⛺</div>
             <h2>MIRROR - KIZUNA</h2>
             <span class="subtitle">12恐龍捉迷藏</span>
-            <p>歡迎來到KIZUNA森林。<br>在林間尋找 12 隻隱藏的恐龍，<br>答對羈絆謎題，並將牠們引導回中央大本營。</p>
+            <p>歡迎來到KIZUNA森林。<br>在林間尋找 12 隻隱藏的恐龍，<br>答對羈絆謎題，並將牠們引導回中央營地。</p>
             <button class="btn" onclick="startGame()">踏入漫步</button>
         </div>
     </div>
@@ -474,8 +474,8 @@
             <div class="emoji-art">⛺✨🍀</div>
             <h2>KIZUNA 羈絆已建立</h2>
             <span class="subtitle">MISSION 1 COMPLETED</span>
-            <p>做得獨太好，12 隻 MIRROR 恐龍已被成功收服。<br>現在，請伴隨隊伍回到地圖正中央的 <strong>大本營</strong> 集合，開啟下一階段的覺醒任務！</p>
-            <button class="btn" style="background: linear-gradient(135deg, var(--egarden-green-leaf), #556B2F);" onclick="closeCampHint()">回歸大本營</button>
+            <p>做得太好，12隻 MIRROR 恐龍已被成功收服。<br>現在，請伴隨隊伍回到地圖正中央的 <strong>營地</strong> 集合，開啟下一階段的覺醒任務！</p>
+            <button class="btn" style="background: linear-gradient(135deg, var(--egarden-green-leaf), #556B2F);" onclick="closeCampHint()">回歸營地</button>
         </div>
     </div>
 
@@ -484,7 +484,7 @@
             <div class="emoji-art">🌌✨💫</div>
             <h2>覺醒任務！</h2>
             <span class="subtitle">PHASE 2: MEMORIES SHATTERED</span>
-            <p>恐龍們受到星辰魔法召喚，重新隱藏於星空！<br><br>請踏入星空尋找隱秘的星辰 。在這<strong>神祕星海</strong>！你需要回答12位成員個人專屬問題，讓身邊跟隨的恐龍覺醒為成員！<br>全部變身成功後再帶領整隊回大本營集合吧！</p>
+            <p>恐龍們受到星辰魔法召喚，重新隱藏於星空！<br><br>請踏入星空尋找隱秘的星辰 。在這<strong>神祕星海</strong>！你需要回答12位成員個人專屬問題，讓身邊跟隨的恐龍覺醒為成員！<br>全部變身成功後再帶領整隊回營地集合吧！</p>
             <button class="btn" onclick="startPhase2()">接受新任務</button>
         </div>
     </div>
@@ -494,8 +494,8 @@
             <div class="emoji-art">⛺🌈🌟</div>
             <h2>所有成員已歸位！</h2>
             <span class="subtitle">FINAL CALL</span>
-            <p>恭喜！你已為全體 12 位成員尋回記憶！<br>現在，帶著整支 MIRROR 隊伍回到地圖正中央的 <strong>大本營</strong> 集合！</p>
-            <button class="btn" style="background: linear-gradient(135deg, #1F3D7A, #3B6BB0);" onclick="closePhase2EndHint()">回到大本營</button>
+            <p>恭喜！你已為全體 12位成員尋回記憶！<br>現在，帶著整支 MIRROR隊伍回到地圖正中央的 <strong>營地</strong> 集合！</p>
+            <button class="btn" style="background: linear-gradient(135deg, #1F3D7A, #3B6BB0);" onclick="closePhase2EndHint()">回到營地</button>
         </div>
     </div>
 
@@ -782,9 +782,9 @@
         { q: "MIRROR 於 21 年成軍三周年的派台單曲是？", options: ["《ALL IN ONE》", "《BOSS》", "《WARRIOR》"], ans: 0 },
         { q: "哪一首歌是 MIRROR 的首支英文單曲？", options: ["《Rumours》", "《Rocketstars》", "《Catch a Vibe》"], ans: 0 },
         { q: "MIRROR 2024 熱血日系、象徵「羈絆」的團體單曲？", options: ["《KIZUNA》", "《Day 0》", "《Rumours》"], ans: 0 },
-        { q: "由 MIRROR 12 位成員共同主演的電影名稱是？", options: ["《12怪盜》", "《全民造星II》", "《考有Feel》"], ans: 0 },
+        { q: "由 MIRROR 12位成員共同主演的電影名稱是？", options: ["《12怪盜》", "《全民造星II》", "《考有Feel》"], ans: 0 },
         { q: "《調教你 MIRROR》中，梁祖堯帶領成員前往哪裡集訓？", options: ["大嶼山梅窩", "長洲", "南丫島"], ans: 0 },
-        { q: "2021 年，聯同 ERROR 成員共同主持的綜藝是？", options: ["《考有 Feel》", "《MIRROR GO》", "《花姐ERROR遊》"], ans: 0 },
+        { q: "2021 年，聯同 ERROR成員共同主持的綜藝是？", options: ["《考有 Feel》", "《MIRROR GO》", "《花姐ERROR遊》"], ans: 0 },
         { q: "2021 九展舉行首場大型實體演唱會名稱為？", options: ["《MIRROR ONE & ALL LIVE 2021》", "《MIRROR WE ARE 2021》", "《MIRROR FEEL THE PASSION》"], ans: 0 },
         { q: "團體歌曲中以強烈電子節奏呼喊「Warrior」作品？", options: ["《WARRIOR》", "《BOSS》", "《IGNITED》"], ans: 0 },
         { q: "與 Dame D.O.L.L.A 合作、以黑白與鏡面打造的MV是？", options: ["《Day 0》", "《WARRIOR》", "《Rumours》"], ans: 0 },
@@ -1243,7 +1243,7 @@
         document.getElementById('campHintScreen').classList.remove('active'); 
         gameState = 'playing';
         document.getElementById('controlsHint').innerHTML = `
-            <span>引導12隻至大本營地⛺</span>
+            <span>引導12隻恐龍回營地⛺</span>
         `;
     }
 
@@ -1523,7 +1523,7 @@
                     if(dino.state === 'hidden' && Math.hypot(player.x - dino.x, player.y - dino.y) < 50) triggerQuestion(index);
                 });
             } else {
-                // 階段二完成並回到大本營：觸發通關邏輯
+                // 階段二完成並回到營地：觸發通關邏輯
                 if(Math.hypot(player.x - camp.x, player.y - camp.y) < 60) endGame();
             }
         }
@@ -1631,7 +1631,7 @@
             });
         }
 
-        // 渲染大本營
+        // 渲染營地
         ctx.save();
         if (currentPhase === 2) {
             ctx.shadowColor = 'rgba(142, 188, 243, 0.85)'; ctx.shadowBlur = 22;
